@@ -109,9 +109,16 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     [persist, state],
   );
 
+  const restoreBackup = useCallback(
+    (next: AppState) => {
+      persist(next);
+    },
+    [persist],
+  );
+
   const value = useMemo(
-    () => ({ state, recordFind, undoLast, setPosition }),
-    [recordFind, setPosition, state, undoLast],
+    () => ({ state, recordFind, undoLast, setPosition, restoreBackup }),
+    [recordFind, restoreBackup, setPosition, state, undoLast],
   );
 
   return (

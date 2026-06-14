@@ -105,6 +105,26 @@ function normalizeState(raw: unknown): AppState {
   return empty;
 }
 
+export function parseBackupData(raw: unknown): AppState | null {
+  if (!raw || typeof raw !== 'object') {
+    return null;
+  }
+
+  const candidate = raw as { version?: unknown; variants?: unknown };
+  if (candidate.version !== 1 && candidate.version !== 2) {
+    return null;
+  }
+  if (!candidate.variants || typeof candidate.variants !== 'object') {
+    return null;
+  }
+
+  return normalizeState(raw);
+}
+
+export function serializeState(state: AppState): string {
+  return JSON.stringify(state, null, 2);
+}
+
 export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);

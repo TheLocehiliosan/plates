@@ -6,6 +6,7 @@ export interface ProgressContextValue {
   recordFind: (variantId: VariantId, note?: string) => boolean;
   undoLast: (variantId: VariantId) => boolean;
   setPosition: (variantId: VariantId, progressIndex: number) => boolean;
+  restoreBackup: (state: AppState) => void;
 }
 
 export const ProgressContext = createContext<ProgressContextValue | null>(null);
