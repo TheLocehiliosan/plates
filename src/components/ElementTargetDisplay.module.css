@@ -1,0 +1,73 @@
+.display {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.125rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: slashed-zero;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.symbol {
+  font-weight: 700;
+}
+
+.atomicButton {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.45em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.15em;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.atomicButton:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.large .symbol {
+  font-size: 3rem;
+  letter-spacing: 0.05em;
+}
+
+.large .atomicButton {
+  font-size: 1.125rem;
+  margin-bottom: 0.35rem;
+}
+
+.medium .symbol {
+  font-size: 1.125rem;
+}
+
+.medium .atomicButton {
+  font-size: 0.625rem;
+  margin-bottom: 0.1rem;
+}
+
+.small .symbol {
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.small .atomicButton {
+  font-size: 0.6875rem;
+  margin-bottom: 0.15rem;
+}
+
+@media (min-width: 640px) {
+  .large .symbol {
+    font-size: 3.5rem;
+  }
+
+  .small .symbol {
+    font-size: 1.625rem;
+  }
+}

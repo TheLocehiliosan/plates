@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { formatProgressCount } from '../games/format';
+import { ElementTargetDisplay } from './ElementTargetDisplay';
+import { formatProgressCount, formatTargetDisplay } from '../games/format';
 import { getTotalFoundCount } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
 import type { VariantId } from '../games/types';
@@ -37,7 +38,18 @@ export function VariantCard({ variantId }: VariantCardProps) {
       <span
         className={`${styles.target} ${isLongTarget ? styles.targetLong : ''}`}
       >
-        {isComplete ? '✓' : nextTarget}
+        {isComplete && '✓'}
+        {!isComplete && variantId === 'elements' && nextTarget && (
+          <ElementTargetDisplay
+            symbol={nextTarget}
+            size="small"
+            stopPropagation
+          />
+        )}
+        {!isComplete &&
+          variantId !== 'elements' &&
+          nextTarget &&
+          formatTargetDisplay(variantId, nextTarget)}
       </span>
       <span className={styles.count}>
         {formatProgressCount(foundCount, variant.totalSteps)}

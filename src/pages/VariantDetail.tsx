@@ -1,10 +1,11 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { FoundItForm } from '../components/FoundItForm';
+import { ElementTargetDisplay } from '../components/ElementTargetDisplay';
 import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
-import { formatTrackedSummary } from '../games/format';
+import { formatTrackedSummary, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import { getProgressIndex } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
@@ -57,9 +58,22 @@ export function VariantDetail() {
         ) : (
           <>
             <p className={styles.lookingLabel}>Looking for</p>
-            <p className={styles.target}>{nextTarget}</p>
+            {variantId === 'elements' && nextTarget ? (
+              <div className={styles.elementTarget}>
+                <ElementTargetDisplay symbol={nextTarget} size="large" />
+              </div>
+            ) : (
+              <p className={styles.target}>
+                {nextTarget && formatTargetDisplay(variantId, nextTarget)}
+              </p>
+            )}
             {currentLearnMore && <LearnMoreLink link={currentLearnMore} />}
             <p className={styles.hint}>{variant.matchRuleHint}</p>
+            {variantId === 'elements' && (
+              <p className={styles.elementHint}>
+                Tap the atomic number to view the periodic table.
+              </p>
+            )}
           </>
         )}
       </section>

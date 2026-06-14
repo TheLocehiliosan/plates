@@ -32,10 +32,7 @@ export function normalizeTargetInput(variantId: VariantId, raw: string): string 
   }
 
   if (variantId === 'elements') {
-    if (trimmed.length === 1) {
-      return trimmed.toUpperCase();
-    }
-    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    return trimmed.toUpperCase();
   }
 
   if (variantId === 'pi') {
@@ -117,7 +114,7 @@ export function getPositionInputHint(variantId: VariantId, mode: SetPositionMode
     case 'binary':
       return mode === 'nextTarget' ? 'e.g. 100110' : 'e.g. 100101';
     case 'elements':
-      return mode === 'nextTarget' ? 'e.g. Ca' : 'e.g. K';
+      return mode === 'nextTarget' ? 'e.g. CA' : 'e.g. K';
     case 'pi':
       return mode === 'nextTarget' ? 'e.g. 653' : 'e.g. 535';
     default:

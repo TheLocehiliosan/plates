@@ -40,9 +40,32 @@ export function getElementName(symbol: string): string | null {
   return ELEMENT_NAMES[index] ?? null;
 }
 
+export function getElementAtomicNumber(symbol: string): number | null {
+  const index = ELEMENTS.findIndex(
+    (entry) => entry.toUpperCase() === symbol.toUpperCase(),
+  );
+  if (index < 0) {
+    return null;
+  }
+  return index + 1;
+}
+
+export function getElementByAtomicNumber(n: number): {
+  symbol: string;
+  name: string;
+} | null {
+  if (n < 1 || n > ELEMENTS_TOTAL) {
+    return null;
+  }
+  return {
+    symbol: ELEMENTS[n - 1].toUpperCase(),
+    name: ELEMENT_NAMES[n - 1],
+  };
+}
+
 export function getElementTarget(index: number): string | null {
   if (index < 0 || index >= ELEMENTS_TOTAL) {
     return null;
   }
-  return ELEMENTS[index];
+  return ELEMENTS[index].toUpperCase();
 }

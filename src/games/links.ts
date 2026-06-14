@@ -60,11 +60,7 @@ export function getLearnMoreLink(
   }
 
   const display =
-    variantId === 'hex'
-      ? `${target} (${value})`
-      : variantId === 'binary'
-        ? `${target} (${value})`
-        : String(value);
+    variantId === 'hex' || variantId === 'binary' ? target : String(value);
 
   return {
     href: numberWikiUrl(value),

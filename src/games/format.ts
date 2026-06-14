@@ -1,4 +1,4 @@
-import type { VariantDefinition } from './types';
+import type { VariantDefinition, VariantId } from './types';
 
 export function formatMatchRule(variant: VariantDefinition): string {
   if (variant.matchRule === 'endAnchored') {
@@ -41,4 +41,12 @@ export function formatTrackedSummary(
 ): string {
   const total = priorCount + trackedCount;
   return formatProgressCount(total, totalSteps);
+}
+
+/** Display form shown in the UI (plates use uppercase element symbols). */
+export function formatTargetDisplay(variantId: VariantId, target: string): string {
+  if (variantId === 'elements') {
+    return target.toUpperCase();
+  }
+  return target;
 }

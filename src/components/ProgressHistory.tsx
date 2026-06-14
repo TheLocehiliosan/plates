@@ -1,6 +1,7 @@
-import { formatDate, formatPriorCount } from '../games/format';
+import { formatDate, formatPriorCount, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import type { ProgressEntry, VariantId } from '../games/types';
+import { ElementTargetDisplay } from './ElementTargetDisplay';
 import { LearnMoreLink } from './LearnMoreLink';
 import styles from './ProgressHistory.module.css';
 
@@ -53,7 +54,13 @@ export function ProgressHistory({
                   className={styles.item}
                 >
                   <div className={styles.row}>
-                    <span className={styles.target}>{entry.target}</span>
+                  {variantId === 'elements' ? (
+                    <ElementTargetDisplay symbol={entry.target} size="medium" />
+                  ) : (
+                    <span className={styles.target}>
+                      {formatTargetDisplay(variantId, entry.target)}
+                    </span>
+                  )}
                     <span className={styles.date}>{formatDate(entry.foundAt)}</span>
                   </div>
                   {learnMore && <LearnMoreLink link={learnMore} />}
