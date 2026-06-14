@@ -68,7 +68,12 @@ export function VariantDetail() {
         <h1 className={styles.title}>{variant.name}</h1>
         <p className={styles.description}>{variant.shortDescription}</p>
         <p className={styles.progress}>
-          {formatTrackedSummary(priorCount, entries.length, variant.totalSteps)}
+          {formatTrackedSummary(
+            variantId,
+            priorCount,
+            entries.length,
+            variant.totalSteps,
+          )}
         </p>
       </header>
 

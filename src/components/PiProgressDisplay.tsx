@@ -16,21 +16,18 @@ export function PiProgressDisplay({ progressIndex }: PiProgressDisplayProps) {
     return null;
   }
 
-  const { confirmed, target, peek, hasMore, windowNumber } = view;
+  const { confirmed, target, peek, hasMore, digitsFound } = view;
   const confirmedDisplay = formatPiConfirmed(confirmed);
-  const targetDisplay = formatPiStreamTarget(target, progressIndex);
+  const targetDisplay =
+    progressIndex === 0 ? formatPiStreamTarget(target, progressIndex) : target;
 
   return (
     <div className={styles.wrap}>
       <p className={styles.label}>Your progress through π</p>
       <p className={styles.position}>
-        Window {windowNumber}
-        {confirmed.length > 0 && (
-          <>
-            {' '}
-            · {confirmed.length} digit{confirmed.length === 1 ? '' : 's'} found
-          </>
-        )}
+        {digitsFound === 0
+          ? 'No digits found yet'
+          : `${digitsFound} digit${digitsFound === 1 ? '' : 's'} of π found`}
       </p>
       <p
         className={styles.stream}

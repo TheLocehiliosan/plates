@@ -1,4 +1,4 @@
-import { formatDate, formatPriorCount, formatTargetDisplay } from '../games/format';
+import { formatDate, formatPriorCountForProgress, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import type { ProgressEntry, VariantId } from '../games/types';
 import { ElementTargetDisplay } from './ElementTargetDisplay';
@@ -38,7 +38,9 @@ export function ProgressHistory({
       {hasPrior && (
         <div className={styles.priorSummary}>
           <span className={styles.priorLabel}>Before tracking</span>
-          <span className={styles.priorText}>{formatPriorCount(priorCount)}</span>
+          <span className={styles.priorText}>
+            {formatPriorCountForProgress(variantId, priorCount)}
+          </span>
         </div>
       )}
 

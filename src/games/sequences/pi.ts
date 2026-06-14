@@ -11,6 +11,56 @@ export function getPiTarget(index: number): string | null {
   return PI_DIGITS.slice(index, index + 3);
 }
 
+/** Largest progress index that still has a 3-digit window to find. */
+export const PI_MAX_PROGRESS_INDEX = PI_DIGIT_COUNT - 3;
+
+/** First find covers 3 digits; each later find adds one more digit to the run. */
+export function getPiDigitsFound(progressIndex: number): number {
+  if (progressIndex <= 0) {
+    return 0;
+  }
+  return progressIndex + 2;
+}
+
+/** Inverse of {@link getPiDigitsFound} for set-starting-position input. */
+export function getPiProgressIndexFromDigitsFound(digitsFound: number): number | null {
+  if (digitsFound === 0) {
+    return 0;
+  }
+  if (digitsFound < 3) {
+    return null;
+  }
+  return digitsFound - 2;
+}
+
+/** Largest valid "digits already found" while a next target still exists. */
+export function getPiMaxDigitsFound(): number {
+  return getPiDigitsFound(PI_MAX_PROGRESS_INDEX);
+}
+
+/**
+ * Map "digits already found" to progress index for set-starting-position.
+ * Valid counts are 0 or 3+ (1–2 are impossible with 3-digit windows).
+ */
+export function resolvePiDigitsFound(rawInput: string): number | null {
+  const trimmed = rawInput.trim();
+  if (!trimmed || !/^\d+$/.test(trimmed)) {
+    return null;
+  }
+
+  const digitsFound = Number.parseInt(trimmed, 10);
+  if (Number.isNaN(digitsFound) || digitsFound < 0 || digitsFound > getPiMaxDigitsFound()) {
+    return null;
+  }
+
+  const progressIndex = getPiProgressIndexFromDigitsFound(digitsFound);
+  if (progressIndex === null) {
+    return null;
+  }
+
+  return getPiTarget(progressIndex) === null ? null : progressIndex;
+}
+
 const PI_PEEK_AFTER = 2;
 
 export interface PiProgressView {
@@ -18,7 +68,7 @@ export interface PiProgressView {
   target: string;
   peek: string;
   hasMore: boolean;
-  windowNumber: number;
+  digitsFound: number;
 }
 
 /** Digits confirmed before the current sliding window, plus target, peek, and ellipsis. */
@@ -27,6 +77,8 @@ export function getPiProgressView(progressIndex: number): PiProgressView | null 
     return null;
   }
 
+  const digitsFound = getPiDigitsFound(progressIndex);
+  /** Digits strictly before the current window — avoids overlapping the boxed target. */
   const confirmed = PI_DIGITS.slice(0, progressIndex);
   const target = PI_DIGITS.slice(progressIndex, progressIndex + 3);
   const peekEnd = progressIndex + 3 + PI_PEEK_AFTER;
@@ -37,7 +89,7 @@ export function getPiProgressView(progressIndex: number): PiProgressView | null 
     target,
     peek,
     hasMore: peekEnd < PI_DIGIT_COUNT,
-    windowNumber: progressIndex + 1,
+    digitsFound,
   };
 }
 

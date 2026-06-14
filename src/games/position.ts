@@ -1,5 +1,9 @@
 import { getVariant } from './registry';
-import { PI_DIGIT_COUNT } from './sequences/pi';
+import {
+  getPiMaxDigitsFound,
+  PI_DIGIT_COUNT,
+  resolvePiDigitsFound,
+} from './sequences/pi';
 import type { SetPositionMode, VariantId } from './types';
 
 function targetsMatch(variantId: VariantId, a: string, b: string): boolean {
@@ -33,10 +37,6 @@ export function normalizeTargetInput(variantId: VariantId, raw: string): string 
 
   if (variantId === 'elements') {
     return trimmed.toUpperCase();
-  }
-
-  if (variantId === 'pi') {
-    return trimmed.replace(/\D/g, '').slice(0, 3);
   }
 
   return trimmed;
@@ -85,6 +85,10 @@ export function resolveProgressIndex(
   mode: SetPositionMode,
   rawInput: string,
 ): number | null {
+  if (variantId === 'pi') {
+    return resolvePiDigitsFound(rawInput);
+  }
+
   const trimmed = rawInput.trim();
   if (!trimmed) {
     return null;
@@ -116,15 +120,26 @@ export function getPositionInputHint(variantId: VariantId, mode: SetPositionMode
     case 'elements':
       return mode === 'nextTarget' ? 'e.g. CA' : 'e.g. K';
     case 'pi':
-      return mode === 'nextTarget' ? 'e.g. 653' : 'e.g. 535';
+      return 'e.g. 5 if you had already found 3.1415';
     default:
       return '';
   }
+}
+
+export function getPiPositionInputLabel(): string {
+  return 'Digits of π already found';
+}
+
+export function getPiPositionMaxDigits(): number {
+  return getPiMaxDigitsFound();
 }
 
 export function getPositionInputPlaceholder(
   variantId: VariantId,
   mode: SetPositionMode,
 ): string {
+  if (variantId === 'pi') {
+    return '0';
+  }
   return getPositionInputHint(variantId, mode).replace(/^e\.g\. /, '');
 }

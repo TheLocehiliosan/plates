@@ -1,4 +1,5 @@
 import type { VariantDefinition, VariantId } from './types';
+import { getPiDigitsFound } from './sequences/pi';
 
 export function formatMatchRule(variant: VariantDefinition): string {
   if (variant.matchRule === 'endAnchored') {
@@ -8,9 +9,17 @@ export function formatMatchRule(variant: VariantDefinition): string {
 }
 
 export function formatProgressCount(
+  variantId: VariantId,
   foundCount: number,
   totalSteps?: number,
 ): string {
+  if (variantId === 'pi') {
+    if (foundCount === 1) {
+      return '1 digit of π found';
+    }
+    return `${foundCount} digits of π found`;
+  }
+
   if (totalSteps !== undefined) {
     return `${foundCount} / ${totalSteps} found`;
   }
@@ -24,10 +33,18 @@ export function formatDate(iso: string): string {
   });
 }
 
-export function formatPriorCount(count: number): string {
+export function formatPriorCount(variantId: VariantId, count: number): string {
   if (count === 0) {
     return '';
   }
+
+  if (variantId === 'pi') {
+    if (count === 1) {
+      return '1 digit of π before tracking';
+    }
+    return `${count} digits of π before tracking`;
+  }
+
   if (count === 1) {
     return '1 find before tracking';
   }
@@ -35,12 +52,24 @@ export function formatPriorCount(count: number): string {
 }
 
 export function formatTrackedSummary(
+  variantId: VariantId,
   priorCount: number,
   trackedCount: number,
   totalSteps?: number,
 ): string {
-  const total = priorCount + trackedCount;
-  return formatProgressCount(total, totalSteps);
+  const progressIndex = priorCount + trackedCount;
+  const displayCount =
+    variantId === 'pi' ? getPiDigitsFound(progressIndex) : progressIndex;
+  return formatProgressCount(variantId, displayCount, totalSteps);
+}
+
+export function formatPriorCountForProgress(
+  variantId: VariantId,
+  progressIndex: number,
+): string {
+  const displayCount =
+    variantId === 'pi' ? getPiDigitsFound(progressIndex) : progressIndex;
+  return formatPriorCount(variantId, displayCount);
 }
 
 /** Display form shown in the UI (plates use uppercase element symbols). */

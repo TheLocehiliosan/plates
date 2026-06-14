@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ElementTargetDisplay } from './ElementTargetDisplay';
 import { formatProgressCount, formatTargetDisplay } from '../games/format';
 import { getTotalFoundCount } from '../games/progress';
+import { getPiDigitsFound } from '../games/sequences/pi';
 import { getNextTarget, getVariant } from '../games/registry';
 import type { VariantId } from '../games/types';
 import { useProgress } from '../context/useProgress';
@@ -52,7 +53,11 @@ export function VariantCard({ variantId }: VariantCardProps) {
           formatTargetDisplay(variantId, nextTarget)}
       </span>
       <span className={styles.count}>
-        {formatProgressCount(foundCount, variant.totalSteps)}
+        {formatProgressCount(
+          variantId,
+          variantId === 'pi' ? getPiDigitsFound(foundCount) : foundCount,
+          variant.totalSteps,
+        )}
       </span>
     </Link>
   );
