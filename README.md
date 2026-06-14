@@ -58,9 +58,30 @@ src/
 
 ## Deployment
 
-Build output is static files in `dist/`. Deploy to any static host (Netlify, Vercel, GitHub Pages, etc.).
+Build output is static files in `dist/`. This project is set up for **GitHub Pages** at [plates.locehilios.com](https://plates.locehilios.com) (repo: [TheLocehiliosan/plates](https://github.com/TheLocehiliosan/plates)).
 
-For client-side routing, configure the host to serve `index.html` for unknown paths (SPA fallback) so deep links like `/variant/classic` work.
+### First-time GitHub setup
+
+1. Create a public repo `TheLocehiliosan/plates` and push this branch (`master`).
+2. On GitHub: **Settings → Pages → Build and deployment → Source** → **GitHub Actions**.
+3. **Settings → Pages → Custom domain** → enter `plates.locehilios.com` → Save.
+4. At your DNS host for `locehilios.com`, add:
+   - **Type:** `CNAME`
+   - **Name:** `plates`
+   - **Target:** `TheLocehiliosan.github.io`
+5. Wait for DNS and GitHub’s certificate (often minutes, sometimes up to a day).
+6. Enable **Enforce HTTPS** when it appears.
+
+Pushes to `master` run `.github/workflows/deploy.yml` (build, SPA `404.html` fallback, deploy). SSL is free via GitHub/Let’s Encrypt — no certificate purchase needed.
+
+### Local build
+
+```bash
+npm run build   # → dist/
+npm run preview # smoke-test production build locally
+```
+
+Client-side routes (`/rules`, `/variant/classic`, etc.) rely on `404.html` (a copy of `index.html`) so deep links work on GitHub Pages.
 
 ## Development with Cursor
 
