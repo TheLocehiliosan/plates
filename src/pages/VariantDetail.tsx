@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { FoundItForm } from '../components/FoundItForm';
 import { ElementTargetDisplay } from '../components/ElementTargetDisplay';
+import { FlavorModal } from '../components/FlavorModal';
 import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
+import { getClassicFlavor } from '../games/flavor/classic';
+import type { ClassicFlavor } from '../games/flavor/types';
 import { formatTrackedSummary, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import { getProgressIndex } from '../games/progress';
@@ -12,9 +16,15 @@ import { getNextTarget, getVariant } from '../games/registry';
 import { isValidVariantId } from '../storage/progressStore';
 import styles from './VariantDetail.module.css';
 
+interface FlavorReveal {
+  target: string;
+  flavor: ClassicFlavor;
+}
+
 export function VariantDetail() {
   const { variantId: variantIdParam } = useParams();
   const { state, recordFind, undoLast, setPosition } = useProgress();
+  const [flavorReveal, setFlavorReveal] = useState<FlavorReveal | null>(null);
 
   if (!isValidVariantId(variantIdParam)) {
     return <Navigate to="/" replace />;
@@ -29,6 +39,21 @@ export function VariantDetail() {
   const nextTarget = getNextTarget(variantId, progressIndex);
   const currentLearnMore =
     nextTarget !== null ? getLearnMoreLink(variantId, nextTarget) : null;
+
+  function handleFound(note?: string) {
+    if (!nextTarget) {
+      return;
+    }
+
+    const foundTarget = nextTarget;
+    const flavor =
+      variantId === 'classic' ? getClassicFlavor(foundTarget) : null;
+    const success = recordFind(variantId, note);
+
+    if (success && flavor) {
+      setFlavorReveal({ target: foundTarget, flavor });
+    }
+  }
 
   return (
     <div className={styles.detail}>
@@ -80,7 +105,7 @@ export function VariantDetail() {
 
       {!isComplete && (
         <section className={styles.actions}>
-          <FoundItForm onSubmit={(note) => recordFind(variantId, note)} />
+          <FoundItForm onSubmit={handleFound} />
           {entries.length > 0 && (
             <button
               type="button"
@@ -109,6 +134,14 @@ export function VariantDetail() {
           entries={entries}
         />
       </section>
+
+      {flavorReveal && (
+        <FlavorModal
+          target={flavorReveal.target}
+          flavor={flavorReveal.flavor}
+          onClose={() => setFlavorReveal(null)}
+        />
+      )}
     </div>
   );
 }

@@ -89,7 +89,7 @@ function getSequenceDescription(id: string): string {
 function getGoalDescription(id: string): string {
   switch (id) {
     case 'classic':
-      return 'Reach 999 (a lifetime achievement)';
+      return 'Reach 999 (a lifetime achievement). Roughly 1 in 3 finds shows a pop-culture surprise when you log it.';
     case 'elements':
       return 'Complete all 118 elements';
     default:
