@@ -1,0 +1,32 @@
+---
+description: React components, pages, and CSS Modules conventions
+globs: src/**/*.tsx,src/**/*.module.css
+alwaysApply: false
+---
+
+# React UI Conventions
+
+## Structure
+
+- **Pages** (`src/pages/`) — route-level views: Dashboard, VariantDetail, Rules
+- **Components** (`src/components/`) — reusable UI pieces
+- Each component/page pairs with `*.module.css`; use CSS variables from `src/index.css`
+
+## Patterns in this project
+
+- Use `useProgress()` for progress state — do not prop-drill `AppState`
+- Use `getVariant`, `getNextTarget` from registry for display logic
+- Route params: validate with `isValidVariantId` before use; redirect invalid ids to `/`
+- Mobile-first: large tap targets for "Found it!"; readable target display (mono font for targets)
+
+## Styling
+
+- Prefer existing CSS variables: `--color-accent`, `--color-surface`, `--color-text-muted`, etc.
+- Do not introduce Tailwind or CSS-in-JS unless explicitly requested
+- Empty states: show helpful hint text (see `ProgressHistory`)
+
+## Do not
+
+- Add backend fetch calls or auth
+- Store game sequence logic in components — keep it in `src/games/`
+- Import from `progressStore` in UI except for `isValidVariantId` on routes

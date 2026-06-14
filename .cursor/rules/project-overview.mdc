@@ -1,0 +1,30 @@
+---
+description: Plate Pursuit project overview and core constraints
+alwaysApply: true
+---
+
+# Plate Pursuit — Project Overview
+
+## What this is
+
+Client-only React SPA for tracking license-plate spotting game progress. No backend, no accounts, no sync.
+
+## Hard constraints
+
+- **Static deploy only** — `npm run build` → `dist/`; no server-side runtime code
+- **localStorage only** — key `plate-pursuit:v1`; all progress stays on the user's device
+- **Honor system** — user self-reports finds via "Found it!"; do not add plate validation unless explicitly requested
+- **One track per variant** — six independent progress streams, not multiple runs of the same variant
+
+## Stack conventions
+
+- React + TypeScript + Vite + React Router
+- CSS Modules (`*.module.css`) colocated with components; global resets in `src/index.css`
+- State: `ProgressContext` wraps app; pure I/O in `src/storage/progressStore.ts`
+- Game logic lives in `src/games/` — UI should not embed sequence rules
+
+## When adding features
+
+- Keep diffs minimal; match existing patterns in surrounding files
+- New game variants: add sequence + registry entry + update `VARIANT_IDS` in `types.ts`
+- Schema changes: bump `version` in `AppState` and add migration in `progressStore.ts`

@@ -1,0 +1,43 @@
+---
+description: Game variants, sequences, and registry conventions
+globs: src/games/**
+alwaysApply: false
+---
+
+# Game Core (`src/games/`)
+
+## Adding a variant
+
+1. Add id to `VariantId` and `VARIANT_IDS` in `types.ts`
+2. Implement sequence in `sequences/` (or reuse `counting.ts` for base-N counting)
+3. Register in `registry.ts` with: `id`, `name`, `shortDescription`, `matchRule`, `matchRuleHint`, `getTarget`, `isComplete`, optional `totalSteps`
+4. Empty progress is auto-created for all `VARIANT_IDS` in `progressStore.ts`
+
+## Match rules
+
+- `endAnchored` — Classic only; last 3 characters of plate
+- `anywhere` — target is a substring anywhere on the plate
+
+## Sequence details (do not get these wrong)
+
+- **Classic:** zero-padded `001`..`999`; index 0 → `001`
+- **Decimal/Hex/Binary:** 1-based counting via `getCountingTarget(index, base)`; hex is uppercase
+- **Elements:** 118 IUPAC symbols in atomic-number order; display mixed case, match case-insensitive
+- **Pi:** digits `31415926…` (no decimal); step index `i` → `digits.slice(i, i + 3)`; duplicate values at different steps are valid
+
+## Registry API
+
+- `getNextTarget(id, progressIndex)` — returns null when complete or out of digits
+- `variant.isComplete(progressIndex)` — true when `progressIndex >= totalSteps` (or never for open-ended)
+- Keep generators **pure functions** — no React, no localStorage
+
+## Examples
+
+```typescript
+// Classic target at index 0
+getClassicTarget(0) // "001"
+
+// Pi first five windows
+getPiTarget(0) // "314"
+getPiTarget(4) // "592"
+```

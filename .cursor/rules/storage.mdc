@@ -1,0 +1,39 @@
+---
+description: localStorage persistence and progress context conventions
+globs: src/storage/**,src/context/**
+alwaysApply: false
+---
+
+# Storage & Progress State
+
+## Separation of concerns
+
+- `progressStore.ts` — pure functions: `loadState`, `saveState`, `createEmptyState`, `isValidVariantId`
+- `ProgressContext.tsx` — React state, `recordFind`, `undoLast`; calls store then `saveState`
+
+Do not read/write `localStorage` directly from components or pages.
+
+## Schema (`AppState`)
+
+```typescript
+{ version: 1, variants: Record<VariantId, { entries: ProgressEntry[] }> }
+```
+
+Each `ProgressEntry`: `{ target, foundAt (ISO string), note? }`.
+
+## Rules
+
+- **Derived, not stored:** current target = `getNextTarget(id, entries.length)`
+- **`recordFind`:** append entry with canonical target from registry; ignore if already complete
+- **`undoLast`:** remove last entry; no-op if empty
+- **`normalizeState`:** validate on load; drop malformed entries; default missing variants to `{ entries: [] }`
+
+## Migrations
+
+If the schema changes:
+
+1. Increment `version` in `AppState`
+2. Add migration branch in `normalizeState` (or dedicated migrate fn)
+3. Update `STORAGE_KEY` suffix if breaking (e.g. `plate-pursuit:v2`)
+
+Never silently discard user progress without migration logic.

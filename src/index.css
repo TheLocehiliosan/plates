@@ -1,0 +1,53 @@
+:root {
+  --color-bg: #f4f1eb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8f6f2;
+  --color-border: #ddd6cb;
+  --color-text: #1c1917;
+  --color-text-muted: #57534e;
+  --color-accent: #b45309;
+  --color-accent-hover: #92400e;
+  --color-accent-soft: #fef3c7;
+  --color-success: #166534;
+  --color-success-soft: #dcfce7;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --shadow-sm: 0 1px 3px rgb(28 25 23 / 8%);
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+strong {
+  font-weight: 600;
+}
