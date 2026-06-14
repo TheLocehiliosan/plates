@@ -1,9 +1,11 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { FoundItForm } from '../components/FoundItForm';
+import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
 import { formatTrackedSummary } from '../games/format';
+import { getLearnMoreLink } from '../games/links';
 import { getProgressIndex } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
 import { isValidVariantId } from '../storage/progressStore';
@@ -24,6 +26,8 @@ export function VariantDetail() {
   const progressIndex = getProgressIndex(progress);
   const isComplete = variant.isComplete(progressIndex);
   const nextTarget = getNextTarget(variantId, progressIndex);
+  const currentLearnMore =
+    nextTarget !== null ? getLearnMoreLink(variantId, nextTarget) : null;
 
   return (
     <div className={styles.detail}>
@@ -54,6 +58,7 @@ export function VariantDetail() {
           <>
             <p className={styles.lookingLabel}>Looking for</p>
             <p className={styles.target}>{nextTarget}</p>
+            {currentLearnMore && <LearnMoreLink link={currentLearnMore} />}
             <p className={styles.hint}>{variant.matchRuleHint}</p>
           </>
         )}
@@ -84,7 +89,11 @@ export function VariantDetail() {
 
       <section className={styles.historySection}>
         <h2 className={styles.historyTitle}>History</h2>
-        <ProgressHistory priorCount={priorCount} entries={entries} />
+        <ProgressHistory
+          variantId={variantId}
+          priorCount={priorCount}
+          entries={entries}
+        />
       </section>
     </div>
   );

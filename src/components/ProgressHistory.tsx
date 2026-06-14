@@ -1,13 +1,20 @@
 import { formatDate, formatPriorCount } from '../games/format';
-import type { ProgressEntry } from '../games/types';
+import { getLearnMoreLink } from '../games/links';
+import type { ProgressEntry, VariantId } from '../games/types';
+import { LearnMoreLink } from './LearnMoreLink';
 import styles from './ProgressHistory.module.css';
 
 interface ProgressHistoryProps {
+  variantId: VariantId;
   priorCount: number;
   entries: ProgressEntry[];
 }
 
-export function ProgressHistory({ priorCount, entries }: ProgressHistoryProps) {
+export function ProgressHistory({
+  variantId,
+  priorCount,
+  entries,
+}: ProgressHistoryProps) {
   const hasPrior = priorCount > 0;
   const hasTracked = entries.length > 0;
 
@@ -38,18 +45,22 @@ export function ProgressHistory({ priorCount, entries }: ProgressHistoryProps) {
         <>
           {hasPrior && <h3 className={styles.subheading}>Tracked finds</h3>}
           <ul className={styles.list}>
-            {reversed.map((entry, index) => (
-              <li
-                key={`${entry.foundAt}-${entries.length - index}`}
-                className={styles.item}
-              >
-                <div className={styles.row}>
-                  <span className={styles.target}>{entry.target}</span>
-                  <span className={styles.date}>{formatDate(entry.foundAt)}</span>
-                </div>
-                {entry.note && <p className={styles.note}>{entry.note}</p>}
-              </li>
-            ))}
+            {reversed.map((entry, index) => {
+              const learnMore = getLearnMoreLink(variantId, entry.target);
+              return (
+                <li
+                  key={`${entry.foundAt}-${entries.length - index}`}
+                  className={styles.item}
+                >
+                  <div className={styles.row}>
+                    <span className={styles.target}>{entry.target}</span>
+                    <span className={styles.date}>{formatDate(entry.foundAt)}</span>
+                  </div>
+                  {learnMore && <LearnMoreLink link={learnMore} />}
+                  {entry.note && <p className={styles.note}>{entry.note}</p>}
+                </li>
+              );
+            })}
           </ul>
         </>
       )}
