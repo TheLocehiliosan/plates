@@ -3,13 +3,17 @@ export type FlavorCategory =
   | 'history'
   | 'math'
   | 'internet'
-  | 'pattern';
+  | 'pattern'
+  | 'science';
 
-export interface ClassicFlavor {
+export interface Flavor {
   text: string;
   source?: string;
   category: FlavorCategory;
 }
+
+/** @deprecated Use {@link Flavor} */
+export type ClassicFlavor = Flavor;
 
 export const FLAVOR_CATEGORY_LABELS: Record<FlavorCategory, string> = {
   'pop-culture': 'Pop culture',
@@ -17,4 +21,5 @@ export const FLAVOR_CATEGORY_LABELS: Record<FlavorCategory, string> = {
   math: 'Math',
   internet: 'Internet',
   pattern: 'Pattern',
+  science: 'Science',
 };

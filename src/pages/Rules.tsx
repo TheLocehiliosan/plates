@@ -91,7 +91,7 @@ function getGoalDescription(id: string): string {
     case 'classic':
       return 'Reach 999 (a lifetime achievement). Roughly 1 in 3 finds shows a pop-culture surprise when you log it.';
     case 'elements':
-      return 'Complete all 118 elements';
+      return 'Complete all 118 elements. Every find shows a fun fact about that element.';
     default:
       return 'Get as far as you can';
   }

@@ -9,7 +9,8 @@ import { ProgressHistory } from '../components/ProgressHistory';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
 import { getClassicFlavor } from '../games/flavor/classic';
-import type { ClassicFlavor } from '../games/flavor/types';
+import { getElementFlavorWithName } from '../games/flavor/elements';
+import type { Flavor } from '../games/flavor/types';
 import { formatTrackedSummary, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import { getProgressIndex } from '../games/progress';
@@ -19,7 +20,8 @@ import styles from './VariantDetail.module.css';
 
 interface FlavorReveal {
   target: string;
-  flavor: ClassicFlavor;
+  flavor: Flavor;
+  subtitle?: string;
 }
 
 export function VariantDetail() {
@@ -47,12 +49,28 @@ export function VariantDetail() {
     }
 
     const foundTarget = nextTarget;
-    const flavor =
-      variantId === 'classic' ? getClassicFlavor(foundTarget) : null;
+    let flavorRevealNext: FlavorReveal | null = null;
+
+    if (variantId === 'classic') {
+      const flavor = getClassicFlavor(foundTarget);
+      if (flavor) {
+        flavorRevealNext = { target: foundTarget, flavor };
+      }
+    } else if (variantId === 'elements') {
+      const elementFlavor = getElementFlavorWithName(foundTarget);
+      if (elementFlavor) {
+        flavorRevealNext = {
+          target: formatTargetDisplay(variantId, foundTarget),
+          flavor: elementFlavor.flavor,
+          subtitle: elementFlavor.name,
+        };
+      }
+    }
+
     const success = recordFind(variantId, note);
 
-    if (success && flavor) {
-      setFlavorReveal({ target: foundTarget, flavor });
+    if (success && flavorRevealNext) {
+      setFlavorReveal(flavorRevealNext);
     }
   }
 
@@ -150,6 +168,7 @@ export function VariantDetail() {
         <FlavorModal
           target={flavorReveal.target}
           flavor={flavorReveal.flavor}
+          subtitle={flavorReveal.subtitle}
           onClose={() => setFlavorReveal(null)}
         />
       )}

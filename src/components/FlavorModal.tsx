@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import {
   FLAVOR_CATEGORY_LABELS,
-  type ClassicFlavor,
+  type Flavor,
 } from '../games/flavor/types';
 import styles from './FlavorModal.module.css';
 
 interface FlavorModalProps {
   target: string;
-  flavor: ClassicFlavor;
+  flavor: Flavor;
+  subtitle?: string;
   onClose: () => void;
 }
 
-export function FlavorModal({ target, flavor, onClose }: FlavorModalProps) {
+export function FlavorModal({ target, flavor, subtitle, onClose }: FlavorModalProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -43,6 +44,7 @@ export function FlavorModal({ target, flavor, onClose }: FlavorModalProps) {
           <h2 id="flavor-title" className={styles.target}>
             {target}
           </h2>
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
           <span className={styles.badge}>
             {FLAVOR_CATEGORY_LABELS[flavor.category]}
           </span>
