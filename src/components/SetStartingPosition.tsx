@@ -17,7 +17,6 @@ interface SetStartingPositionProps {
 const MODES: { id: SetPositionMode; label: string }[] = [
   { id: 'nextTarget', label: "I'm looking for" },
   { id: 'lastFound', label: 'Last I found' },
-  { id: 'totalCompleted', label: 'Total completed' },
 ];
 
 export function SetStartingPosition({
@@ -122,8 +121,7 @@ export function SetStartingPosition({
         <input
           id="position-value"
           className={styles.input}
-          type={mode === 'totalCompleted' ? 'number' : 'text'}
-          min={mode === 'totalCompleted' ? 0 : undefined}
+          type="text"
           value={value}
           onChange={(event) => {
             setValue(event.target.value);

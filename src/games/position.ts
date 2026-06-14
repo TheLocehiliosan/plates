@@ -93,18 +93,6 @@ export function resolveProgressIndex(
     return null;
   }
 
-  if (mode === 'totalCompleted') {
-    const n = Number.parseInt(trimmed, 10);
-    if (Number.isNaN(n) || n < 0) {
-      return null;
-    }
-    const variant = getVariant(variantId);
-    if (variant.totalSteps !== undefined && n > variant.totalSteps) {
-      return null;
-    }
-    return n;
-  }
-
   const completedIndex = findCompletedTargetIndex(variantId, trimmed);
   if (completedIndex === null) {
     return null;
@@ -119,10 +107,6 @@ export function resolveProgressIndex(
 }
 
 export function getPositionInputHint(variantId: VariantId, mode: SetPositionMode): string {
-  if (mode === 'totalCompleted') {
-    return 'Number of finds completed so far';
-  }
-
   switch (variantId) {
     case 'classic':
       return mode === 'nextTarget' ? 'e.g. 048 or 48' : 'e.g. 047';
@@ -145,8 +129,5 @@ export function getPositionInputPlaceholder(
   variantId: VariantId,
   mode: SetPositionMode,
 ): string {
-  if (mode === 'totalCompleted') {
-    return '47';
-  }
   return getPositionInputHint(variantId, mode).replace(/^e\.g\. /, '');
 }

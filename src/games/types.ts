@@ -46,4 +46,4 @@ export interface VariantDefinition {
   totalSteps?: number;
 }
 
-export type SetPositionMode = 'nextTarget' | 'lastFound' | 'totalCompleted';
+export type SetPositionMode = 'nextTarget' | 'lastFound';
