@@ -56,7 +56,9 @@ export function VariantDetail() {
   }
 
   return (
-    <div className={styles.detail}>
+    <div
+      className={`${styles.detail} ${!isComplete ? styles.detailWithStickyActions : ''}`}
+    >
       <Link to="/" className={styles.back}>
         ← Back to dashboard
       </Link>
@@ -105,7 +107,7 @@ export function VariantDetail() {
 
       {!isComplete && (
         <section className={styles.actions}>
-          <FoundItForm onSubmit={handleFound} />
+          <FoundItForm onSubmit={handleFound} collapsibleNote />
           {entries.length > 0 && (
             <button
               type="button"

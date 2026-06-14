@@ -49,3 +49,44 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.noteDetails {
+  margin: 0;
+}
+
+.noteSummary {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  list-style: none;
+}
+
+.noteSummary::-webkit-details-marker {
+  display: none;
+}
+
+.noteFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Desktop: keep note fields visible even when collapsible mode is enabled */
+@media (min-width: 640px) {
+  .collapsibleNote .noteSummary {
+    display: none;
+  }
+
+  .collapsibleNote .noteDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .collapsibleNote .noteFields {
+    display: contents;
+    margin-top: 0;
+  }
+}
