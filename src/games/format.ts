@@ -23,3 +23,22 @@ export function formatDate(iso: string): string {
     timeStyle: 'short',
   });
 }
+
+export function formatPriorCount(count: number): string {
+  if (count === 0) {
+    return '';
+  }
+  if (count === 1) {
+    return '1 find before tracking';
+  }
+  return `${count} finds before tracking`;
+}
+
+export function formatTrackedSummary(
+  priorCount: number,
+  trackedCount: number,
+  totalSteps?: number,
+): string {
+  const total = priorCount + trackedCount;
+  return formatProgressCount(total, totalSteps);
+}

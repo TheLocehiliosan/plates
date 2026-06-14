@@ -22,11 +22,14 @@ export interface ProgressEntry {
 }
 
 export interface VariantProgress {
+  priorCount: number;
   entries: ProgressEntry[];
+  /** When the user started logging finds in the app (ISO string). */
+  trackedSince?: string;
 }
 
 export interface AppState {
-  version: 1;
+  version: 2;
   variants: Record<VariantId, VariantProgress>;
 }
 
@@ -42,3 +45,5 @@ export interface VariantDefinition {
   isComplete: (index: number) => boolean;
   totalSteps?: number;
 }
+
+export type SetPositionMode = 'nextTarget' | 'lastFound' | 'totalCompleted';

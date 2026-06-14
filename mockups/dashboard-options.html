@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard layout options — Plate Pursuit</title>
+  <style>
+    :root {
+      --color-bg: #f4f1eb;
+      --color-surface: #ffffff;
+      --color-border: #ddd6cb;
+      --color-text: #1c1917;
+      --color-text-muted: #57534e;
+      --color-accent: #b45309;
+      --color-accent-soft: #fef3c7;
+      --color-success: #166534;
+      --color-success-soft: #dcfce7;
+      --radius-sm: 0.5rem;
+      --radius-md: 0.75rem;
+      --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #e7e2d9;
+      color: var(--color-text);
+      line-height: 1.4;
+    }
+
+    .page {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 1rem 1rem 3rem;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .page-intro {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      margin: 0 0 1.5rem;
+    }
+
+    .option-block {
+      margin-bottom: 2.5rem;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .option-label h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .option-tag {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+      background: var(--color-accent-soft);
+      padding: 0.2rem 0.45rem;
+      border-radius: 0.25rem;
+    }
+
+    .option-desc {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      margin: 0 0 0.75rem;
+    }
+
+    /* Phone frame */
+    .phone {
+      background: var(--color-bg);
+      border: 2px solid #bbb;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+    }
+
+    .phone-bar {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .phone-bar nav {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-text-muted);
+    }
+
+    .phone-bar nav .active {
+      color: var(--color-accent);
+    }
+
+    .phone-body {
+      padding: 1rem;
+      min-height: 520px;
+    }
+
+    .screen-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin: 0 0 0.75rem;
+    }
+
+    /* ——— Option A: compact list ——— */
+    .list-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .list-row {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0.625rem 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .list-row-name {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .list-row-target {
+      font-family: var(--font-mono);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      min-width: 3rem;
+      text-align: center;
+    }
+
+    .list-row-meta {
+      font-size: 0.6875rem;
+      color: var(--color-text-muted);
+      text-align: right;
+      min-width: 2.75rem;
+      line-height: 1.2;
+    }
+
+    .list-row.complete .list-row-target {
+      color: var(--color-success);
+      font-size: 1rem;
+    }
+
+    .list-row-arrow {
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+      opacity: 0.5;
+    }
+
+    /* ——— Option B: status grid ——— */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .status-cell {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.625rem;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .status-cell-label {
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+      min-height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-cell-target {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      line-height: 1.1;
+      margin-bottom: 0.25rem;
+    }
+
+    .status-cell-count {
+      font-size: 0.625rem;
+      color: var(--color-text-muted);
+    }
+
+    .status-cell.complete .status-cell-target {
+      font-size: 1.25rem;
+      color: var(--color-success);
+    }
+
+    .scroll-hint {
+      margin-top: 0.75rem;
+      font-size: 0.6875rem;
+      color: var(--color-text-muted);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .compare-note {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .compare-note strong {
+      color: var(--color-text);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Dashboard layout options</h1>
+    <p class="page-intro">
+      Sample data for a player mid-game. Open on your phone to compare scroll height.
+      Current app uses ~6 tall cards; both options fit all variants with less scrolling.
+    </p>
+
+    <!-- Option A -->
+    <section class="option-block">
+      <div class="option-label">
+        <span class="option-tag">Option A</span>
+        <h2>Compact list rows</h2>
+      </div>
+      <p class="option-desc">
+        One scannable row per variant. Description and match rules live on the detail page only.
+      </p>
+      <div class="phone">
+        <div class="phone-bar">
+          <span>Plate Pursuit</span>
+          <nav><span class="active">Dashboard</span><span>How to Play</span></nav>
+        </div>
+        <div class="phone-body">
+          <h3 class="screen-title">Your Games</h3>
+          <div class="list-rows">
+            <a class="list-row" href="#">
+              <span class="list-row-name">Classic</span>
+              <span class="list-row-target">042</span>
+              <span class="list-row-meta">41<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+            <a class="list-row" href="#">
+              <span class="list-row-name">Decimal</span>
+              <span class="list-row-target">38</span>
+              <span class="list-row-meta">37<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+            <a class="list-row" href="#">
+              <span class="list-row-name">Hex</span>
+              <span class="list-row-target">26</span>
+              <span class="list-row-meta">25<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+            <a class="list-row" href="#">
+              <span class="list-row-name">Binary</span>
+              <span class="list-row-target">100110</span>
+              <span class="list-row-meta">37<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+            <a class="list-row" href="#">
+              <span class="list-row-name">Elements</span>
+              <span class="list-row-target">Ca</span>
+              <span class="list-row-meta">19<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+            <a class="list-row" href="#">
+              <span class="list-row-name">Pi</span>
+              <span class="list-row-target">653</span>
+              <span class="list-row-meta">8<br/>found</span>
+              <span class="list-row-arrow">›</span>
+            </a>
+          </div>
+          <p class="scroll-hint">All 6 variants visible — minimal or no scroll</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Option B -->
+    <section class="option-block">
+      <div class="option-label">
+        <span class="option-tag">Option B</span>
+        <h2>Status grid</h2>
+      </div>
+      <p class="option-desc">
+        Targets are the hero — 2×3 grid, optimized for “what number am I on?” at a glance.
+      </p>
+      <div class="phone">
+        <div class="phone-bar">
+          <span>Plate Pursuit</span>
+          <nav><span class="active">Dashboard</span><span>How to Play</span></nav>
+        </div>
+        <div class="phone-body">
+          <h3 class="screen-title">Your Games</h3>
+          <div class="status-grid">
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Classic</div>
+              <div class="status-cell-target">042</div>
+              <div class="status-cell-count">41 / 999</div>
+            </a>
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Decimal</div>
+              <div class="status-cell-target">38</div>
+              <div class="status-cell-count">37 found</div>
+            </a>
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Hex</div>
+              <div class="status-cell-target">26</div>
+              <div class="status-cell-count">25 found</div>
+            </a>
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Binary</div>
+              <div class="status-cell-target">100110</div>
+              <div class="status-cell-count">37 found</div>
+            </a>
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Elements</div>
+              <div class="status-cell-target">Ca</div>
+              <div class="status-cell-count">19 / 118</div>
+            </a>
+            <a class="status-cell" href="#">
+              <div class="status-cell-label">Pi</div>
+              <div class="status-cell-target">653</div>
+              <div class="status-cell-count">8 found</div>
+            </a>
+          </div>
+          <p class="scroll-hint">All 6 targets above the fold — zero scroll on most phones</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="compare-note">
+      <strong>Quick comparison</strong><br />
+      <strong>A</strong> — best if you want a readable list with variant names prominent; long binary targets still fit in a row.<br />
+      <strong>B</strong> — best if the target number is what you care about most; very little scrolling; variant names are abbreviated.<br />
+      Both assume you tap through to the detail page for rules, Found it!, and history.
+    </div>
+  </div>
+</body>
+</html>

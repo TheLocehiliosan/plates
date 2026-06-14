@@ -2,12 +2,16 @@ import { VARIANT_IDS, type AppState, type VariantId } from '../games/types';
 
 export const STORAGE_KEY = 'plate-pursuit:v1';
 
+function emptyVariantProgress(): AppState['variants'][VariantId] {
+  return { priorCount: 0, entries: [] };
+}
+
 function createEmptyState(): AppState {
   return {
-    version: 1,
+    version: 2,
     variants: VARIANT_IDS.reduce(
       (acc, id) => {
-        acc[id] = { entries: [] };
+        acc[id] = emptyVariantProgress();
         return acc;
       },
       {} as AppState['variants'],
@@ -19,37 +23,83 @@ function isVariantId(value: string): value is VariantId {
   return VARIANT_IDS.includes(value as VariantId);
 }
 
+function normalizeEntries(raw: unknown): AppState['variants'][VariantId]['entries'] {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  return raw
+    .filter(
+      (entry): entry is { target: string; foundAt: string; note?: string } =>
+        !!entry &&
+        typeof entry === 'object' &&
+        typeof entry.target === 'string' &&
+        typeof entry.foundAt === 'string' &&
+        (entry.note === undefined || typeof entry.note === 'string'),
+    )
+    .map((entry) => ({
+      target: entry.target,
+      foundAt: entry.foundAt,
+      note: entry.note?.trim() || undefined,
+    }));
+}
+
+function normalizeVariantProgress(raw: unknown): AppState['variants'][VariantId] {
+  const base = emptyVariantProgress();
+  if (!raw || typeof raw !== 'object') {
+    return base;
+  }
+
+  const candidate = raw as {
+    priorCount?: unknown;
+    entries?: unknown;
+    trackedSince?: unknown;
+  };
+
+  if (typeof candidate.priorCount === 'number' && candidate.priorCount >= 0) {
+    base.priorCount = Math.floor(candidate.priorCount);
+  }
+
+  base.entries = normalizeEntries(candidate.entries);
+
+  if (typeof candidate.trackedSince === 'string' && candidate.trackedSince) {
+    base.trackedSince = candidate.trackedSince;
+  }
+
+  return base;
+}
+
 function normalizeState(raw: unknown): AppState {
   const empty = createEmptyState();
   if (!raw || typeof raw !== 'object') {
     return empty;
   }
 
-  const candidate = raw as Partial<AppState>;
-  if (candidate.version !== 1 || !candidate.variants) {
+  const candidate = raw as { version?: unknown; variants?: unknown };
+  if (!candidate.variants || typeof candidate.variants !== 'object') {
     return empty;
   }
 
-  for (const id of VARIANT_IDS) {
-    const progress = candidate.variants[id];
-    if (!progress || !Array.isArray(progress.entries)) {
-      continue;
-    }
+  const version = candidate.version;
 
-    empty.variants[id].entries = progress.entries
-      .filter(
-        (entry): entry is { target: string; foundAt: string; note?: string } =>
-          !!entry &&
-          typeof entry === 'object' &&
-          typeof entry.target === 'string' &&
-          typeof entry.foundAt === 'string' &&
-          (entry.note === undefined || typeof entry.note === 'string'),
-      )
-      .map((entry) => ({
-        target: entry.target,
-        foundAt: entry.foundAt,
-        note: entry.note?.trim() || undefined,
-      }));
+  for (const id of VARIANT_IDS) {
+    const progress = (candidate.variants as Record<string, unknown>)[id];
+    if (version === 1) {
+      empty.variants[id] = {
+        priorCount: 0,
+        entries: normalizeEntries(
+          progress && typeof progress === 'object'
+            ? (progress as { entries?: unknown }).entries
+            : [],
+        ),
+      };
+    } else if (version === 2) {
+      empty.variants[id] = normalizeVariantProgress(progress);
+    }
+  }
+
+  if (version !== 1 && version !== 2) {
+    return createEmptyState();
   }
 
   return empty;

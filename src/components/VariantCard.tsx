@@ -1,9 +1,19 @@
 import { Link } from 'react-router-dom';
-import { formatMatchRule, formatProgressCount } from '../games/format';
+import { formatProgressCount } from '../games/format';
+import { getTotalFoundCount } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
 import type { VariantId } from '../games/types';
 import { useProgress } from '../context/useProgress';
 import styles from './VariantCard.module.css';
+
+const SHORT_NAMES: Record<VariantId, string> = {
+  classic: 'Classic',
+  decimal: 'Decimal',
+  hex: 'Hex',
+  binary: 'Binary',
+  elements: 'Elements',
+  pi: 'Pi',
+};
 
 interface VariantCardProps {
   variantId: VariantId;
@@ -12,27 +22,26 @@ interface VariantCardProps {
 export function VariantCard({ variantId }: VariantCardProps) {
   const { state } = useProgress();
   const variant = getVariant(variantId);
-  const foundCount = state.variants[variantId].entries.length;
+  const progress = state.variants[variantId];
+  const foundCount = getTotalFoundCount(progress);
   const isComplete = variant.isComplete(foundCount);
   const nextTarget = getNextTarget(variantId, foundCount);
+  const isLongTarget = !isComplete && (nextTarget?.length ?? 0) > 5;
 
   return (
-    <Link to={`/variant/${variantId}`} className={styles.card}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>{variant.name}</h2>
-        {isComplete && <span className={styles.badge}>Complete</span>}
-      </div>
-      <p className={styles.description}>{variant.shortDescription}</p>
-      <div className={styles.targetBlock}>
-        <span className={styles.targetLabel}>
-          {isComplete ? 'Finished' : 'Looking for'}
-        </span>
-        <span className={styles.target}>{isComplete ? '✓' : nextTarget}</span>
-      </div>
-      <div className={styles.footer}>
-        <span>{formatProgressCount(foundCount, variant.totalSteps)}</span>
-        <span className={styles.rule}>{formatMatchRule(variant)}</span>
-      </div>
+    <Link
+      to={`/variant/${variantId}`}
+      className={`${styles.cell} ${isComplete ? styles.complete : ''}`}
+    >
+      <span className={styles.label}>{SHORT_NAMES[variantId]}</span>
+      <span
+        className={`${styles.target} ${isLongTarget ? styles.targetLong : ''}`}
+      >
+        {isComplete ? '✓' : nextTarget}
+      </span>
+      <span className={styles.count}>
+        {formatProgressCount(foundCount, variant.totalSteps)}
+      </span>
     </Link>
   );
 }

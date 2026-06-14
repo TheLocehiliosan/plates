@@ -1,15 +1,17 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { FoundItForm } from '../components/FoundItForm';
 import { ProgressHistory } from '../components/ProgressHistory';
+import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
-import { formatMatchRule, formatProgressCount } from '../games/format';
+import { formatTrackedSummary } from '../games/format';
+import { getProgressIndex } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
 import { isValidVariantId } from '../storage/progressStore';
 import styles from './VariantDetail.module.css';
 
 export function VariantDetail() {
   const { variantId: variantIdParam } = useParams();
-  const { state, recordFind, undoLast } = useProgress();
+  const { state, recordFind, undoLast, setPosition } = useProgress();
 
   if (!isValidVariantId(variantIdParam)) {
     return <Navigate to="/" replace />;
@@ -17,10 +19,11 @@ export function VariantDetail() {
 
   const variantId = variantIdParam;
   const variant = getVariant(variantId);
-  const entries = state.variants[variantId].entries;
-  const foundCount = entries.length;
-  const isComplete = variant.isComplete(foundCount);
-  const nextTarget = getNextTarget(variantId, foundCount);
+  const progress = state.variants[variantId];
+  const { priorCount, entries } = progress;
+  const progressIndex = getProgressIndex(progress);
+  const isComplete = variant.isComplete(progressIndex);
+  const nextTarget = getNextTarget(variantId, progressIndex);
 
   return (
     <div className={styles.detail}>
@@ -32,7 +35,7 @@ export function VariantDetail() {
         <h1 className={styles.title}>{variant.name}</h1>
         <p className={styles.description}>{variant.shortDescription}</p>
         <p className={styles.progress}>
-          {formatProgressCount(foundCount, variant.totalSteps)}
+          {formatTrackedSummary(priorCount, entries.length, variant.totalSteps)}
         </p>
       </header>
 
@@ -52,7 +55,6 @@ export function VariantDetail() {
             <p className={styles.lookingLabel}>Looking for</p>
             <p className={styles.target}>{nextTarget}</p>
             <p className={styles.hint}>{variant.matchRuleHint}</p>
-            <p className={styles.rule}>{formatMatchRule(variant)}</p>
           </>
         )}
       </section>
@@ -60,7 +62,7 @@ export function VariantDetail() {
       {!isComplete && (
         <section className={styles.actions}>
           <FoundItForm onSubmit={(note) => recordFind(variantId, note)} />
-          {foundCount > 0 && (
+          {entries.length > 0 && (
             <button
               type="button"
               className={styles.undoButton}
@@ -72,9 +74,17 @@ export function VariantDetail() {
         </section>
       )}
 
+      <div className={styles.setPosition}>
+        <SetStartingPosition
+          variantId={variantId}
+          hasTrackedEntries={entries.length > 0}
+          onSetPosition={(index) => setPosition(variantId, index)}
+        />
+      </div>
+
       <section className={styles.historySection}>
         <h2 className={styles.historyTitle}>History</h2>
-        <ProgressHistory entries={entries} />
+        <ProgressHistory priorCount={priorCount} entries={entries} />
       </section>
     </div>
   );

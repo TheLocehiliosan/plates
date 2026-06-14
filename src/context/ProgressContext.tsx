@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import { getNextTarget } from '../games/registry';
+import { getProgressIndex } from '../games/progress';
+import { getNextTarget, getVariant } from '../games/registry';
 import type { AppState, VariantId } from '../games/types';
 import { loadState, saveState } from '../storage/progressStore';
 import { ProgressContext } from './progress-context';
@@ -15,22 +16,26 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const recordFind = useCallback(
     (variantId: VariantId, note?: string) => {
       const progress = state.variants[variantId];
-      const nextTarget = getNextTarget(variantId, progress.entries.length);
+      const progressIndex = getProgressIndex(progress);
+      const nextTarget = getNextTarget(variantId, progressIndex);
       if (!nextTarget) {
         return false;
       }
 
       const trimmedNote = note?.trim();
+      const now = new Date().toISOString();
       const next: AppState = {
         ...state,
         variants: {
           ...state.variants,
           [variantId]: {
+            ...progress,
+            trackedSince: progress.trackedSince ?? now,
             entries: [
               ...progress.entries,
               {
                 target: nextTarget,
-                foundAt: new Date().toISOString(),
+                foundAt: now,
                 note: trimmedNote || undefined,
               },
             ],
@@ -56,6 +61,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         variants: {
           ...state.variants,
           [variantId]: {
+            ...progress,
             entries: progress.entries.slice(0, -1),
           },
         },
@@ -67,9 +73,45 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     [persist, state],
   );
 
+  const setPosition = useCallback(
+    (variantId: VariantId, progressIndex: number) => {
+      const variant = getVariant(variantId);
+      if (progressIndex < 0) {
+        return false;
+      }
+      if (variant.totalSteps !== undefined && progressIndex > variant.totalSteps) {
+        return false;
+      }
+      if (variant.isComplete(progressIndex)) {
+        // Allow setting to complete state only if it's exactly totalSteps
+        if (progressIndex !== variant.totalSteps) {
+          return false;
+        }
+      } else if (getNextTarget(variantId, progressIndex) === null) {
+        return false;
+      }
+
+      const next: AppState = {
+        ...state,
+        variants: {
+          ...state.variants,
+          [variantId]: {
+            priorCount: progressIndex,
+            entries: [],
+            trackedSince: undefined,
+          },
+        },
+      };
+
+      persist(next);
+      return true;
+    },
+    [persist, state],
+  );
+
   const value = useMemo(
-    () => ({ state, recordFind, undoLast }),
-    [recordFind, state, undoLast],
+    () => ({ state, recordFind, undoLast, setPosition }),
+    [recordFind, setPosition, state, undoLast],
   );
 
   return (

@@ -124,6 +124,10 @@
   border-color: var(--color-text-muted);
 }
 
+.setPosition {
+  margin-top: 0.25rem;
+}
+
 .historySection {
   display: flex;
   flex-direction: column;
