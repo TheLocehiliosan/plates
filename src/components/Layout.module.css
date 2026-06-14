@@ -86,7 +86,27 @@
   max-width: 960px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.25rem 0.75rem 3rem;
+  padding: 1.25rem 0.75rem 2rem;
+}
+
+.footer {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0.75rem 1.25rem;
+  text-align: center;
+}
+
+.attribution {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.attribution:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 @media (min-width: 480px) {
@@ -142,7 +162,11 @@
   }
 
   .main {
-    padding: 2rem 1.5rem 4rem;
+    padding: 2rem 1.5rem 2.5rem;
+  }
+
+  .footer {
+    padding: 0 1.5rem 2rem;
   }
 }
 

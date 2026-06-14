@@ -7,6 +7,8 @@ const NAV_ITEMS = [
   { to: '/backup', label: 'Backup', mobileLabel: 'Save', end: false },
 ] as const;
 
+const REPO_URL = 'https://github.com/TheLocehiliosan/plates';
+
 export function Layout() {
   return (
     <div className={styles.layout}>
@@ -37,6 +39,16 @@ export function Layout() {
       <main className={styles.main}>
         <Outlet />
       </main>
+      <footer className={styles.footer}>
+        <a
+          className={styles.attribution}
+          href={REPO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Vibe-coded by Tim Byrne w/Cursor
+        </a>
+      </footer>
     </div>
   );
 }
