@@ -62,7 +62,7 @@ Build output is static files in `dist/`. This project is set up for **GitHub Pag
 
 ### First-time GitHub setup
 
-1. Create a public repo `TheLocehiliosan/plates` and push this branch (`master`).
+1. Create a public repo `TheLocehiliosan/plates` and push the `main` branch.
 2. On GitHub: **Settings → Pages → Build and deployment → Source** → **GitHub Actions**.
 3. **Settings → Pages → Custom domain** → enter `plates.locehilios.com` → Save.
 4. At your DNS host for `locehilios.com`, add:
@@ -72,7 +72,7 @@ Build output is static files in `dist/`. This project is set up for **GitHub Pag
 5. Wait for DNS and GitHub’s certificate (often minutes, sometimes up to a day).
 6. Enable **Enforce HTTPS** when it appears.
 
-Pushes to `master` run `.github/workflows/deploy.yml` (build, SPA `404.html` fallback, deploy). SSL is free via GitHub/Let’s Encrypt — no certificate purchase needed.
+Pushes to `main` run `.github/workflows/deploy.yml` (build, SPA `404.html` fallback, deploy). SSL is free via GitHub/Let’s Encrypt — no certificate purchase needed.
 
 ### Local build
 
