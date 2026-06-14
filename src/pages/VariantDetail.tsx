@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { FoundItForm } from '../components/FoundItForm';
 import { ElementTargetDisplay } from '../components/ElementTargetDisplay';
+import { PiProgressDisplay } from '../components/PiProgressDisplay';
 import { FlavorModal } from '../components/FlavorModal';
 import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
@@ -93,6 +94,9 @@ export function VariantDetail() {
               <p className={styles.target}>
                 {nextTarget && formatTargetDisplay(variantId, nextTarget)}
               </p>
+            )}
+            {variantId === 'pi' && (
+              <PiProgressDisplay progressIndex={progressIndex} />
             )}
             {currentLearnMore && <LearnMoreLink link={currentLearnMore} />}
             <p className={styles.hint}>{variant.matchRuleHint}</p>

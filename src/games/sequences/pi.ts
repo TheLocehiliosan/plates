@@ -10,3 +10,48 @@ export function getPiTarget(index: number): string | null {
   }
   return PI_DIGITS.slice(index, index + 3);
 }
+
+const PI_PEEK_AFTER = 2;
+
+export interface PiProgressView {
+  confirmed: string;
+  target: string;
+  peek: string;
+  hasMore: boolean;
+  windowNumber: number;
+}
+
+/** Digits confirmed before the current sliding window, plus target, peek, and ellipsis. */
+export function getPiProgressView(progressIndex: number): PiProgressView | null {
+  if (progressIndex < 0 || progressIndex + 3 > PI_DIGIT_COUNT) {
+    return null;
+  }
+
+  const confirmed = PI_DIGITS.slice(0, progressIndex);
+  const target = PI_DIGITS.slice(progressIndex, progressIndex + 3);
+  const peekEnd = progressIndex + 3 + PI_PEEK_AFTER;
+  const peek = PI_DIGITS.slice(progressIndex + 3, peekEnd);
+
+  return {
+    confirmed,
+    target,
+    peek,
+    hasMore: peekEnd < PI_DIGIT_COUNT,
+    windowNumber: progressIndex + 1,
+  };
+}
+
+export function formatPiConfirmed(confirmed: string): string {
+  if (confirmed.length === 0) {
+    return '';
+  }
+  return `${confirmed[0]}.${confirmed.slice(1)}`;
+}
+
+/** Target digits in the progress stream, with a decimal when the window starts at π's first digit. */
+export function formatPiStreamTarget(target: string, progressIndex: number): string {
+  if (progressIndex === 0 && target.length > 1) {
+    return `${target[0]}.${target.slice(1)}`;
+  }
+  return target;
+}
