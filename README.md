@@ -10,7 +10,7 @@ A client-only web app for tracking progress in **Plate Pursuit** — a passive l
 | Unanchored Decimal | Anywhere on plate | 1, 2, 3, … | Open-ended |
 | Unanchored Hexadecimal | Anywhere on plate | 1…F, 10, 11, … | Open-ended |
 | Unanchored Binary | Anywhere on plate | 1, 10, 11, 100, … | Open-ended |
-| Elements | Symbol anywhere (case-insensitive) | H, He, Li, … Og (118) | Complete at Og |
+| Elements | Symbol anywhere | H, He, Li, … Og (118) | Complete at Og |
 | Pi | 3-digit window anywhere | 314, 141, 415, 159, … | Open-ended |
 
 Progress uses an **honor system**: the user taps **Found it!** when they believe they spotted the target. The app does not validate plate text.

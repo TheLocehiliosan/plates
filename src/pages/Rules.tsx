@@ -169,7 +169,7 @@ function getSequenceDescription(id: string): string {
     case 'binary':
       return '1, 10, 11, 100, 101, 110, 111, 1000, …';
     case 'elements':
-      return 'H, HE, LI, BE, B, C, … through OG (118 elements; case-insensitive)';
+      return 'H, HE, LI, BE, B, C, … through OG (118 elements)';
     case 'pi':
       return '314, 141, 415, 159, 592, … (each find advances one digit into π)';
     default:
@@ -204,7 +204,7 @@ function getExample(id: string): string {
     case 'binary':
       return 'When seeking 101, plate X101Y qualifies because 101 appears as a substring.';
     case 'elements':
-      return 'When seeking HE, plate THE-999 qualifies (symbols match case-insensitively). HE must appear as one substring — not H from one part of the plate and E from another.';
+      return 'When seeking HE, plate THE-999 qualifies. HE must appear as one substring — not H from one part of the plate and E from another.';
     case 'pi':
       return 'When seeking 415, plate ABC-4157 contains 415 as a substring. One find advances you one window — spotting 314159 does not skip ahead; log each window as you reach it.';
     default:

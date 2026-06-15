@@ -54,7 +54,7 @@ export const VARIANTS: VariantDefinition[] = [
     name: 'Elements',
     shortDescription: 'Find element symbols in periodic-table order.',
     matchRule: 'anywhere',
-    matchRuleHint: 'The element symbol can appear anywhere (case-insensitive).',
+    matchRuleHint: 'The element symbol can appear anywhere on the plate.',
     getTarget: boundedTarget(getElementTarget, ELEMENTS_TOTAL),
     isComplete: (index) => index >= ELEMENTS_TOTAL,
     totalSteps: ELEMENTS_TOTAL,

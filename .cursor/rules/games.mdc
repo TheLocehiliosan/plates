@@ -22,7 +22,7 @@ alwaysApply: false
 
 - **Classic:** zero-padded `001`..`999`; index 0 → `001`
 - **Decimal/Hex/Binary:** 1-based counting via `getCountingTarget(index, base)`; hex is uppercase
-- **Elements:** 118 IUPAC symbols in atomic-number order; display mixed case, match case-insensitive
+- **Elements:** 118 IUPAC symbols in atomic-number order; display uppercase on plates
 - **Pi:** digits `31415926…` (no decimal); step index `i` → `digits.slice(i, i + 3)`; duplicate values at different steps are valid
 
 ## Registry API
