@@ -36,7 +36,7 @@ export const VARIANTS: VariantDefinition[] = [
     name: 'Unanchored Hexadecimal',
     shortDescription: 'Find 1…F, 10, 11, … anywhere on the plate.',
     matchRule: 'anywhere',
-    matchRuleHint: 'The target can appear anywhere on the plate (A–F).',
+    matchRuleHint: 'The target can appear anywhere on the plate.',
     getTarget: (index) => getCountingTarget(index, 16),
     isComplete: () => false,
   },
