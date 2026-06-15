@@ -26,6 +26,7 @@
   flex-shrink: 1;
   min-width: 0;
   font-weight: 700;
+  font-size: 1rem;
   color: var(--color-text);
   text-decoration: none;
   overflow: hidden;
@@ -35,16 +36,6 @@
 
 .logo:hover {
   color: var(--color-accent);
-}
-
-.logoFull {
-  display: none;
-  font-size: 1.25rem;
-}
-
-.logoShort {
-  display: inline;
-  font-size: 1rem;
 }
 
 .nav {
@@ -115,7 +106,7 @@
     gap: 0.75rem;
   }
 
-  .logoShort {
+  .logo {
     font-size: 1.0625rem;
   }
 
@@ -135,12 +126,8 @@
     gap: 1rem;
   }
 
-  .logoFull {
-    display: inline;
-  }
-
-  .logoShort {
-    display: none;
+  .logo {
+    font-size: 1.25rem;
   }
 
   .nav {
@@ -170,12 +157,3 @@
   }
 }
 
-@media (min-width: 768px) {
-  .logoShort {
-    display: none;
-  }
-
-  .logoFull {
-    display: inline;
-  }
-}
