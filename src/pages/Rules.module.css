@@ -15,6 +15,19 @@
   max-width: 42rem;
 }
 
+.tldr {
+  margin: 0.75rem 0 0;
+  padding: 0.625rem 0.875rem;
+  max-width: 42rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
 .section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -33,6 +46,26 @@
   margin: 0 0 1rem;
   color: var(--color-text-muted);
   line-height: 1.5;
+}
+
+.prose {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.prose + .prose {
+  margin-top: 0.75rem;
+}
+
+.prose strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.description + .prose {
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
 }
 
 .list {
