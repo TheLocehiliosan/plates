@@ -64,6 +64,6 @@ export function getLearnMoreLink(
 
   return {
     href: numberWikiUrl(value),
-    label: `Interesting facts about ${display}`,
+    label: `About ${display}`,
   };
 }
