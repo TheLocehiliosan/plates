@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { APP_VERSION } from '../version';
 import styles from './Layout.module.css';
 
 const NAV_ITEMS = [
@@ -47,6 +48,7 @@ export function Layout() {
         >
           Vibe-coded by Tim Byrne w/Cursor
         </a>
+        <span className={styles.version}>v{APP_VERSION}</span>
       </footer>
     </div>
   );
