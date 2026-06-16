@@ -6,9 +6,6 @@
 }
 
 .signPanel {
-  --color-accent: #ffffff;
-  --color-text-muted: rgb(255 255 255 / 0.82);
-
   width: 100%;
   padding: 0.625rem 0.5rem 0.5rem;
   text-align: center;

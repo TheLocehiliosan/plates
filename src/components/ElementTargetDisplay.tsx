@@ -1,4 +1,5 @@
 import { useState, type MouseEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { formatTargetDisplay } from '../games/format';
 import { getElementAtomicNumber, getElementName } from '../games/sequences/elements';
 import { PeriodicTableModal } from './PeriodicTableModal';
@@ -7,6 +8,8 @@ import styles from './ElementTargetDisplay.module.css';
 interface ElementTargetDisplayProps {
   symbol: string;
   size?: 'large' | 'medium' | 'small';
+  /** White-on-green styling when shown on a road sign. */
+  onSign?: boolean;
   /** Stop click from bubbling (e.g. inside a link card). */
   stopPropagation?: boolean;
 }
@@ -14,6 +17,7 @@ interface ElementTargetDisplayProps {
 export function ElementTargetDisplay({
   symbol,
   size = 'medium',
+  onSign = false,
   stopPropagation = false,
 }: ElementTargetDisplayProps) {
   const [showTable, setShowTable] = useState(false);
@@ -34,7 +38,7 @@ export function ElementTargetDisplay({
   return (
     <>
       <span
-        className={`${styles.display} ${styles[size]}`}
+        className={`${styles.display} ${styles[size]} ${onSign ? styles.onSign : ''}`}
         title={name ?? undefined}
       >
         <span className={styles.symbol}>{displaySymbol}</span>
@@ -51,12 +55,15 @@ export function ElementTargetDisplay({
         )}
       </span>
 
-      {showTable && atomicNumber !== null && (
-        <PeriodicTableModal
-          atomicNumber={atomicNumber}
-          onClose={() => setShowTable(false)}
-        />
-      )}
+      {showTable &&
+        atomicNumber !== null &&
+        createPortal(
+          <PeriodicTableModal
+            atomicNumber={atomicNumber}
+            onClose={() => setShowTable(false)}
+          />,
+          document.body,
+        )}
     </>
   );
 }

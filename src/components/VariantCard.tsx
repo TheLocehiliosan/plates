@@ -47,6 +47,7 @@ export function VariantCard({ variantId }: VariantCardProps) {
           <ElementTargetDisplay
             symbol={nextTarget}
             size="small"
+            onSign
             stopPropagation
           />
         )}

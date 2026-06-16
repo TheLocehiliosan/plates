@@ -112,7 +112,7 @@ export function VariantDetail() {
           <>
             <RoadSign label="Looking for" size="large" className={styles.detailSign}>
               {variantId === 'elements' && nextTarget ? (
-                <ElementTargetDisplay symbol={nextTarget} size="large" />
+                <ElementTargetDisplay symbol={nextTarget} size="large" onSign />
               ) : (
                 <p className={styles.target}>
                   {nextTarget && formatTargetDisplay(variantId, nextTarget)}
