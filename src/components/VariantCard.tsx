@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ElementTargetDisplay } from './ElementTargetDisplay';
+import { RoadSign } from './RoadSign';
 import { formatProgressCount, formatTargetDisplay } from '../games/format';
 import { getTotalFoundCount } from '../games/progress';
 import { getPiDigitsFound } from '../games/sequences/pi';
@@ -31,15 +32,17 @@ export function VariantCard({ variantId }: VariantCardProps) {
   const isLongTarget = !isComplete && (nextTarget?.length ?? 0) > 5;
 
   return (
-    <Link
-      to={`/variant/${variantId}`}
-      className={`${styles.cell} ${isComplete ? styles.complete : ''}`}
-    >
-      <span className={styles.label}>{SHORT_NAMES[variantId]}</span>
-      <span
-        className={`${styles.target} ${isLongTarget ? styles.targetLong : ''}`}
+    <Link to={`/variant/${variantId}`} className={styles.cardLink}>
+      <RoadSign
+        label={SHORT_NAMES[variantId]}
+        footer={formatProgressCount(
+          variantId,
+          variantId === 'pi' ? getPiDigitsFound(foundCount) : foundCount,
+          variant.totalSteps,
+        )}
+        complete={isComplete}
       >
-        {isComplete && '✓'}
+        {isComplete && <span className={styles.completeTarget}>✓</span>}
         {!isComplete && variantId === 'elements' && nextTarget && (
           <ElementTargetDisplay
             symbol={nextTarget}
@@ -47,18 +50,14 @@ export function VariantCard({ variantId }: VariantCardProps) {
             stopPropagation
           />
         )}
-        {!isComplete &&
-          variantId !== 'elements' &&
-          nextTarget &&
-          formatTargetDisplay(variantId, nextTarget)}
-      </span>
-      <span className={styles.count}>
-        {formatProgressCount(
-          variantId,
-          variantId === 'pi' ? getPiDigitsFound(foundCount) : foundCount,
-          variant.totalSteps,
+        {!isComplete && variantId !== 'elements' && nextTarget && (
+          <span
+            className={`${styles.target} ${isLongTarget ? styles.targetLong : ''}`}
+          >
+            {formatTargetDisplay(variantId, nextTarget)}
+          </span>
         )}
-      </span>
+      </RoadSign>
     </Link>
   );
 }

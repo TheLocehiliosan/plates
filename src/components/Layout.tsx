@@ -15,8 +15,23 @@ export function Layout() {
     <div className={styles.layout}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <NavLink to="/" className={styles.logo} end>
-            Plate Pursuit
+          <NavLink to="/" className={styles.logo} end aria-label="Plate Pursuit home">
+            <span className={styles.plate} aria-hidden="true">
+              <span className={styles.plateStripe}>
+                <span className={styles.plateSlot} />
+                <span className={styles.plateSlot} />
+              </span>
+              <span className={styles.plateBody}>
+                <span className={styles.plateSlotsRow}>
+                  <span className={styles.plateSlot} />
+                  <span className={styles.plateSlot} />
+                </span>
+                <span className={styles.plateText}>
+                  <span className={styles.plateLine}>Plate</span>
+                  <span className={styles.plateLine}>Pursuit</span>
+                </span>
+              </span>
+            </span>
           </NavLink>
 
           <nav className={styles.nav} aria-label="Main">

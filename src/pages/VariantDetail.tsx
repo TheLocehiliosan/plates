@@ -6,6 +6,7 @@ import { PiProgressDisplay } from '../components/PiProgressDisplay';
 import { FlavorModal } from '../components/FlavorModal';
 import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
+import { RoadSign } from '../components/RoadSign';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { useProgress } from '../context/useProgress';
 import { getClassicFlavor } from '../games/flavor/classic';
@@ -97,37 +98,39 @@ export function VariantDetail() {
 
       <section className={styles.current}>
         {isComplete ? (
-          <div className={styles.complete}>
-            <span className={styles.completeIcon}>✓</span>
-            <h2 className={styles.completeTitle}>Complete!</h2>
-            <p className={styles.completeText}>
-              {variantId === 'classic'
-                ? 'You reached 999. A lifetime achievement.'
-                : 'You completed the full periodic table.'}
-            </p>
-          </div>
+          <RoadSign label="Complete" size="large" complete className={styles.detailSign}>
+            <div className={styles.completeSignBody}>
+              <span className={styles.completeIcon}>✓</span>
+              <p className={styles.completeTitle}>
+                {variantId === 'classic'
+                  ? '999 reached'
+                  : 'All elements found'}
+              </p>
+            </div>
+          </RoadSign>
         ) : (
           <>
-            <p className={styles.lookingLabel}>Looking for</p>
-            {variantId === 'elements' && nextTarget ? (
-              <div className={styles.elementTarget}>
+            <RoadSign label="Looking for" size="large" className={styles.detailSign}>
+              {variantId === 'elements' && nextTarget ? (
                 <ElementTargetDisplay symbol={nextTarget} size="large" />
-              </div>
-            ) : (
-              <p className={styles.target}>
-                {nextTarget && formatTargetDisplay(variantId, nextTarget)}
-              </p>
-            )}
-            {variantId === 'pi' && (
-              <PiProgressDisplay progressIndex={progressIndex} />
-            )}
-            {currentLearnMore && <LearnMoreLink link={currentLearnMore} />}
-            <p className={styles.hint}>{variant.matchRuleHint}</p>
-            {variantId === 'elements' && (
-              <p className={styles.elementHint}>
-                Tap the atomic number to view the periodic table.
-              </p>
-            )}
+              ) : (
+                <p className={styles.target}>
+                  {nextTarget && formatTargetDisplay(variantId, nextTarget)}
+                </p>
+              )}
+            </RoadSign>
+            <div className={styles.belowSign}>
+              {variantId === 'pi' && (
+                <PiProgressDisplay progressIndex={progressIndex} />
+              )}
+              {currentLearnMore && <LearnMoreLink link={currentLearnMore} />}
+              <p className={styles.hint}>{variant.matchRuleHint}</p>
+              {variantId === 'elements' && (
+                <p className={styles.elementHint}>
+                  Tap the atomic number to view the periodic table.
+                </p>
+              )}
+            </div>
           </>
         )}
       </section>

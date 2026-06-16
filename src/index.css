@@ -5,11 +5,19 @@
   --color-border: #ddd6cb;
   --color-text: #1c1917;
   --color-text-muted: #57534e;
-  --color-accent: #b45309;
-  --color-accent-hover: #92400e;
-  --color-accent-soft: #fef3c7;
+  --color-accent: #1e3a5f;
+  --color-accent-hover: #152a45;
+  --color-accent-soft: #e8eef4;
+  --color-sky-top: #b8cce3;
+  --color-sky-mid: #d5e2ef;
   --color-success: #166534;
   --color-success-soft: #dcfce7;
+  --color-sign-green: #016841;
+  --color-sign-green-dark: #014d31;
+  --color-sign-text: #ffffff;
+  --color-post: #78716c;
+  --color-post-dark: #57534e;
+  --color-asphalt: #2d2a26;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --shadow-sm: 0 1px 3px rgb(28 25 23 / 8%);
@@ -34,7 +42,15 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-text);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-sky-top) 0%,
+    var(--color-sky-mid) 22%,
+    var(--color-accent-soft) 42%,
+    var(--color-bg) 72%
+  );
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
