@@ -84,52 +84,6 @@ export function Rules() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Cross-game combos</h2>
-        <ul className={styles.list}>
-          <li>
-            Variants track progress independently, but one plate can advance
-            multiple games when targets overlap. The app detects these
-            automatically and logs all qualifying finds together.
-          </li>
-          <li>
-            <strong>Classic</strong> finds are especially powerful: the last
-            three characters are a known substring on the plate, so unanchored
-            games often advance too. Finding <strong>001</strong> also counts
-            for Decimal, Hex, and Binary <strong>1</strong>. Finding{' '}
-            <strong>012</strong> can advance Decimal and Hex through{' '}
-            <strong>1</strong> and <strong>2</strong> in one tap when those are
-            your current targets.
-          </li>
-          <li>
-            <strong>Unanchored</strong> finds can advance each other when one
-            target string contains another — e.g. Binary <strong>1101</strong>{' '}
-            also satisfies Decimal <strong>101</strong>. There is no
-            cross-base numeric equivalence: Hex <strong>C</strong> does not
-            match Decimal <strong>12</strong>.
-          </li>
-          <li>
-            <strong>Classic is never auto-advanced</strong> from other variants
-            — a plate containing <strong>12</strong> does not prove it ends in{' '}
-            <strong>012</strong>.
-          </li>
-          <li>
-            Within each game, consecutive targets are recorded only while each{' '}
-            <em>next</em> target is a substring of what you found — no
-            skipping. Finding Decimal <strong>12</strong> on plate{' '}
-            <strong>1213</strong> does not auto-log <strong>13</strong>; tap
-            again when you reach that target.
-          </li>
-          <li>
-            On the dashboard, a small interstate-style badge (e.g.{' '}
-            <strong>+3</strong>) appears on a game when your next find there
-            would log extra matches in other games too. After a combo find, a
-            summary lists everything recorded.{' '}
-            <strong>Undo last find</strong> reverses the whole combo.
-          </li>
-        </ul>
-      </section>
-
-      <section className={styles.section}>
         <h2 className={styles.sectionTitle}>The basics</h2>
         <ul className={styles.list}>
           <li>
@@ -187,6 +141,52 @@ export function Rules() {
           </p>
         </section>
       ))}
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Cross-game combos</h2>
+        <ul className={styles.list}>
+          <li>
+            Variants track progress independently, but one plate can advance
+            multiple games when targets overlap. The app detects these
+            automatically and logs all qualifying finds together.
+          </li>
+          <li>
+            <strong>Classic</strong> finds are especially powerful: the last
+            three characters are a known substring on the plate, so unanchored
+            games often advance too. Finding <strong>001</strong> also counts
+            for Decimal, Hex, and Binary <strong>1</strong>. Finding{' '}
+            <strong>012</strong> can advance Decimal and Hex through{' '}
+            <strong>1</strong> and <strong>2</strong> in one tap when those are
+            your current targets.
+          </li>
+          <li>
+            <strong>Unanchored</strong> finds can advance each other when one
+            target string contains another — e.g. Binary <strong>1101</strong>{' '}
+            also satisfies Decimal <strong>101</strong>. There is no
+            cross-base numeric equivalence: Hex <strong>C</strong> does not
+            match Decimal <strong>12</strong>.
+          </li>
+          <li>
+            <strong>Classic is never auto-advanced</strong> from other variants
+            — a plate containing <strong>12</strong> does not prove it ends in{' '}
+            <strong>012</strong>.
+          </li>
+          <li>
+            Within each game, consecutive targets are recorded only while each{' '}
+            <em>next</em> target is a substring of what you found — no
+            skipping. Finding Decimal <strong>12</strong> on plate{' '}
+            <strong>1213</strong> does not auto-log <strong>13</strong>; tap
+            again when you reach that target.
+          </li>
+          <li>
+            On the dashboard, a small interstate-style badge (e.g.{' '}
+            <strong>+3</strong>) appears on a game when your next find there
+            would log extra matches in other games too. After a combo find, a
+            summary lists everything recorded.{' '}
+            <strong>Undo last find</strong> reverses the whole combo.
+          </li>
+        </ul>
+      </section>
     </div>
   );
 }
