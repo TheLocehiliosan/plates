@@ -19,6 +19,8 @@ export interface ProgressEntry {
   target: string;
   foundAt: string;
   note?: string;
+  /** Links entries recorded together in a cross-game combo find. */
+  comboGroupId?: string;
 }
 
 export interface VariantProgress {
@@ -33,7 +35,7 @@ export interface VariantProgress {
 }
 
 export interface AppState {
-  version: 3;
+  version: 4;
   variants: Record<VariantId, VariantProgress>;
 }
 

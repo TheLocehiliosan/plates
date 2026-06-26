@@ -8,6 +8,7 @@ interface RoadSignProps {
   complete?: boolean;
   size?: 'compact' | 'large';
   className?: string;
+  cornerBadge?: ReactNode;
 }
 
 export function RoadSign({
@@ -17,12 +18,16 @@ export function RoadSign({
   complete = false,
   size = 'compact',
   className,
+  cornerBadge,
 }: RoadSignProps) {
   return (
     <div
       className={`${styles.mount} ${size === 'large' ? styles.large : ''} ${complete ? styles.complete : ''} ${className ?? ''}`}
     >
-      <div className={styles.signPanel}>
+      <div
+        className={`${styles.signPanel} ${cornerBadge ? styles.signPanelBadged : ''}`}
+      >
+        {cornerBadge}
         <span className={styles.signLabel}>{label}</span>
         <div className={styles.signBody}>{children}</div>
         {footer !== undefined && footer !== null && footer !== '' && (

@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { ComboInterstateBadge } from './ComboInterstateBadge';
 import { ElementTargetDisplay } from './ElementTargetDisplay';
 import { RoadSign } from './RoadSign';
+import { getComboExtraCount } from '../games/combos';
 import { formatProgressCount, formatTargetDisplay } from '../games/format';
 import { getTotalFoundCount } from '../games/progress';
 import { getPiDigitsFound } from '../games/sequences/pi';
@@ -30,6 +32,9 @@ export function VariantCard({ variantId }: VariantCardProps) {
   const isComplete = variant.isComplete(foundCount);
   const nextTarget = getNextTarget(variantId, foundCount);
   const isLongTarget = !isComplete && (nextTarget?.length ?? 0) > 5;
+  const comboExtraCount = !isComplete
+    ? getComboExtraCount(variantId, state)
+    : 0;
 
   return (
     <Link to={`/variant/${variantId}`} className={styles.cardLink}>
@@ -44,6 +49,11 @@ export function VariantCard({ variantId }: VariantCardProps) {
             isComplete,
           },
         )}
+        cornerBadge={
+          comboExtraCount > 0 ? (
+            <ComboInterstateBadge count={comboExtraCount} />
+          ) : undefined
+        }
         complete={isComplete}
       >
         {isComplete && <span className={styles.completeTarget}>✓</span>}

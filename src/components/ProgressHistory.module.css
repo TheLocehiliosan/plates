@@ -80,6 +80,13 @@
   color: var(--color-text-muted);
 }
 
+.comboBadge {
+  margin: 0.375rem 0 0;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
 .empty {
   background: var(--color-bg);
   border: 1px dashed var(--color-border);

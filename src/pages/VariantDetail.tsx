@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
+import { ComboFindModal } from '../components/ComboFindModal';
 import { FoundItForm } from '../components/FoundItForm';
 import { ElementTargetDisplay } from '../components/ElementTargetDisplay';
 import { PiProgressDisplay } from '../components/PiProgressDisplay';
@@ -10,8 +11,13 @@ import { RoadSign } from '../components/RoadSign';
 import { SetStartingPosition } from '../components/SetStartingPosition';
 import { WinModal } from '../components/WinModal';
 import { useProgress } from '../context/useProgress';
+import {
+  countVariantsInComboGroup,
+  hasCrossVariantComboFinds,
+} from '../games/combos';
+import type { ComboFind } from '../games/combos';
 import { getClassicFlavor } from '../games/flavor/classic';
-import { getCountingWinCopy } from '../games/flavor/counting';
+import { getCountingWinCopy, isCountingWinVariant } from '../games/flavor/counting';
 import { getElementFlavorWithName } from '../games/flavor/elements';
 import type { Flavor } from '../games/flavor/types';
 import { formatDate, formatTrackedSummary, formatTargetDisplay } from '../games/format';
@@ -28,10 +34,51 @@ interface FlavorReveal {
   subtitle?: string;
 }
 
+interface ComboReveal {
+  primaryTarget: string;
+  recorded: ComboFind[];
+}
+
+function buildFlavorQueue(
+  variantId: VariantId,
+  recorded: ComboFind[],
+): FlavorReveal[] {
+  const sourceFind = recorded.find((find) => find.variantId === variantId);
+  if (!sourceFind) {
+    return [];
+  }
+
+  const reveals: FlavorReveal[] = [];
+
+  for (const target of sourceFind.targets) {
+    if (variantId === 'classic') {
+      const flavor = getClassicFlavor(target);
+      if (flavor) {
+        reveals.push({ target, flavor });
+      }
+    } else if (variantId === 'elements') {
+      const elementFlavor = getElementFlavorWithName(target);
+      if (elementFlavor) {
+        reveals.push({
+          target: formatTargetDisplay(variantId, target),
+          flavor: elementFlavor.flavor,
+          subtitle: elementFlavor.name,
+        });
+      }
+    }
+  }
+
+  return reveals;
+}
+
 export function VariantDetail() {
   const { variantId: variantIdParam } = useParams();
-  const { state, recordFind, undoLast, setPosition, markWinCelebrated } = useProgress();
-  const [flavorReveal, setFlavorReveal] = useState<FlavorReveal | null>(null);
+  const { state, recordFind, undoLast, setPosition, markWinCelebrated } =
+    useProgress();
+  const [flavorQueue, setFlavorQueue] = useState<FlavorReveal[]>([]);
+  const [comboReveal, setComboReveal] = useState<ComboReveal | null>(null);
+  const [winQueue, setWinQueue] = useState<VariantId[]>([]);
+  const activeFlavor = flavorQueue[0];
 
   const isValid = isValidVariantId(variantIdParam);
   const variantId: VariantId = isValid ? variantIdParam : 'classic';
@@ -42,8 +89,24 @@ export function VariantDetail() {
   const isComplete = variant.isComplete(progressIndex);
   const nextTarget = getNextTarget(variantId, progressIndex);
   const winCopy = getCountingWinCopy(variantId);
-  const shouldShowWinModal =
-    isValid && isComplete && !!completedAt && !winCelebrated && !!winCopy;
+  const activeWinVariant = winQueue[0];
+  const activeWinCopy = activeWinVariant
+    ? getCountingWinCopy(activeWinVariant)
+    : null;
+  const shouldShowReturnWinModal =
+    isValid &&
+    isComplete &&
+    !!completedAt &&
+    !winCelebrated &&
+    !!winCopy &&
+    winQueue.length === 0 &&
+    !comboReveal &&
+    flavorQueue.length === 0;
+
+  const lastEntry = entries[entries.length - 1];
+  const comboUndoCount = lastEntry?.comboGroupId
+    ? countVariantsInComboGroup(state, lastEntry.comboGroupId)
+    : 0;
 
   if (!isValid) {
     return <Navigate to="/" replace />;
@@ -57,8 +120,28 @@ export function VariantDetail() {
     isComplete,
   };
 
+  function enqueueWinModals(newlyCompleted: VariantId[]) {
+    const countingWins = newlyCompleted.filter(isCountingWinVariant);
+    if (countingWins.length > 0) {
+      setWinQueue((queue) => [...queue, ...countingWins]);
+    }
+  }
+
   function handleWinModalClose() {
+    if (activeWinVariant) {
+      markWinCelebrated(activeWinVariant);
+      setWinQueue((queue) => queue.slice(1));
+      return;
+    }
     markWinCelebrated(variantId);
+  }
+
+  function handleComboClose() {
+    setComboReveal(null);
+  }
+
+  function handleFlavorClose() {
+    setFlavorQueue((queue) => queue.slice(1));
   }
 
   function handleFound(note?: string) {
@@ -67,30 +150,28 @@ export function VariantDetail() {
     }
 
     const foundTarget = nextTarget;
-    let flavorRevealNext: FlavorReveal | null = null;
+    const result = recordFind(variantId, note);
 
-    if (variantId === 'classic') {
-      const flavor = getClassicFlavor(foundTarget);
-      if (flavor) {
-        flavorRevealNext = { target: foundTarget, flavor };
-      }
-    } else if (variantId === 'elements') {
-      const elementFlavor = getElementFlavorWithName(foundTarget);
-      if (elementFlavor) {
-        flavorRevealNext = {
-          target: formatTargetDisplay(variantId, foundTarget),
-          flavor: elementFlavor.flavor,
-          subtitle: elementFlavor.name,
-        };
-      }
+    if (!result.success) {
+      return;
     }
 
-    const success = recordFind(variantId, note);
-
-    if (success && flavorRevealNext) {
-      setFlavorReveal(flavorRevealNext);
+    if (hasCrossVariantComboFinds(variantId, result.recorded)) {
+      setComboReveal({
+        primaryTarget: foundTarget,
+        recorded: result.recorded,
+      });
     }
+
+    setFlavorQueue(buildFlavorQueue(variantId, result.recorded));
+
+    enqueueWinModals(result.newlyCompleted);
   }
+
+  const showComboModal = comboReveal !== null;
+  const showFlavorModal = activeFlavor !== undefined && !showComboModal;
+  const showQueuedWinModal =
+    activeWinVariant !== undefined && activeWinCopy !== null && !showComboModal && !showFlavorModal;
 
   return (
     <div
@@ -162,7 +243,9 @@ export function VariantDetail() {
               className={styles.undoButton}
               onClick={() => undoLast(variantId)}
             >
-              Undo last find
+              {comboUndoCount > 1
+                ? `Undo last find (${comboUndoCount} games)`
+                : 'Undo last find'}
             </button>
           )}
         </section>
@@ -185,16 +268,33 @@ export function VariantDetail() {
         />
       </section>
 
-      {flavorReveal && (
-        <FlavorModal
-          target={flavorReveal.target}
-          flavor={flavorReveal.flavor}
-          subtitle={flavorReveal.subtitle}
-          onClose={() => setFlavorReveal(null)}
+      {showComboModal && comboReveal && (
+        <ComboFindModal
+          primaryTarget={comboReveal.primaryTarget}
+          sourceVariantId={variantId}
+          recorded={comboReveal.recorded}
+          onClose={handleComboClose}
         />
       )}
 
-      {shouldShowWinModal && winCopy && (
+      {showFlavorModal && activeFlavor && (
+        <FlavorModal
+          target={activeFlavor.target}
+          flavor={activeFlavor.flavor}
+          subtitle={activeFlavor.subtitle}
+          onClose={handleFlavorClose}
+        />
+      )}
+
+      {showQueuedWinModal && activeWinCopy && (
+        <WinModal
+          target={activeWinCopy.target}
+          message={activeWinCopy.message}
+          onClose={handleWinModalClose}
+        />
+      )}
+
+      {shouldShowReturnWinModal && winCopy && (
         <WinModal
           target={winCopy.target}
           message={winCopy.message}

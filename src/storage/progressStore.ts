@@ -8,7 +8,7 @@ function emptyVariantProgress(): AppState['variants'][VariantId] {
 
 function createEmptyState(): AppState {
   return {
-    version: 3,
+    version: 4,
     variants: VARIANT_IDS.reduce(
       (acc, id) => {
         acc[id] = emptyVariantProgress();
@@ -30,17 +30,24 @@ function normalizeEntries(raw: unknown): AppState['variants'][VariantId]['entrie
 
   return raw
     .filter(
-      (entry): entry is { target: string; foundAt: string; note?: string } =>
+      (entry): entry is {
+        target: string;
+        foundAt: string;
+        note?: string;
+        comboGroupId?: string;
+      } =>
         !!entry &&
         typeof entry === 'object' &&
         typeof entry.target === 'string' &&
         typeof entry.foundAt === 'string' &&
-        (entry.note === undefined || typeof entry.note === 'string'),
+        (entry.note === undefined || typeof entry.note === 'string') &&
+        (entry.comboGroupId === undefined || typeof entry.comboGroupId === 'string'),
     )
     .map((entry) => ({
       target: entry.target,
       foundAt: entry.foundAt,
       note: entry.note?.trim() || undefined,
+      comboGroupId: entry.comboGroupId || undefined,
     }));
 }
 
@@ -103,16 +110,16 @@ function normalizeState(raw: unknown): AppState {
             : [],
         ),
       };
-    } else if (version === 2 || version === 3) {
+    } else if (version === 2 || version === 3 || version === 4) {
       empty.variants[id] = normalizeVariantProgress(progress);
     }
   }
 
-  if (version !== 1 && version !== 2 && version !== 3) {
+  if (version !== 1 && version !== 2 && version !== 3 && version !== 4) {
     return createEmptyState();
   }
 
-  return empty;
+  return { ...empty, version: 4 };
 }
 
 export function parseBackupData(raw: unknown): AppState | null {
@@ -121,7 +128,12 @@ export function parseBackupData(raw: unknown): AppState | null {
   }
 
   const candidate = raw as { version?: unknown; variants?: unknown };
-  if (candidate.version !== 1 && candidate.version !== 2 && candidate.version !== 3) {
+  if (
+    candidate.version !== 1 &&
+    candidate.version !== 2 &&
+    candidate.version !== 3 &&
+    candidate.version !== 4
+  ) {
     return null;
   }
   if (!candidate.variants || typeof candidate.variants !== 'object') {
@@ -142,10 +154,10 @@ export function loadState(): AppState {
       return createEmptyState();
     }
     const state = normalizeState(JSON.parse(raw));
-    if (state.version !== 3) {
-      saveState({ ...state, version: 3 });
+    if (state.version !== 4) {
+      saveState(state);
     }
-    return { ...state, version: 3 };
+    return state;
   } catch {
     return createEmptyState();
   }

@@ -67,6 +67,9 @@ export function ProgressHistory({
                   </div>
                   {learnMore && <LearnMoreLink link={learnMore} />}
                   {entry.note && <p className={styles.note}>{entry.note}</p>}
+                  {entry.comboGroupId && (
+                    <p className={styles.comboBadge}>part of a combo find</p>
+                  )}
                 </li>
               );
             })}
