@@ -3,7 +3,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 0.875rem 1rem;
-  margin-bottom: 0.75rem;
+  margin-top: 0.75rem;
 }
 
 .priorLabel {

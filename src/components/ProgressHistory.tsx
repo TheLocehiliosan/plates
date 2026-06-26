@@ -35,15 +35,6 @@ export function ProgressHistory({
 
   return (
     <div className={styles.history}>
-      {hasPrior && (
-        <div className={styles.priorSummary}>
-          <span className={styles.priorLabel}>Before tracking</span>
-          <span className={styles.priorText}>
-            {formatPriorCountForProgress(variantId, priorCount)}
-          </span>
-        </div>
-      )}
-
       {hasTracked && (
         <>
           {hasPrior && <h3 className={styles.subheading}>Tracked finds</h3>}
@@ -75,6 +66,15 @@ export function ProgressHistory({
             })}
           </ul>
         </>
+      )}
+
+      {hasPrior && (
+        <div className={styles.priorSummary}>
+          <span className={styles.priorLabel}>Before tracking</span>
+          <span className={styles.priorText}>
+            {formatPriorCountForProgress(variantId, priorCount)}
+          </span>
+        </div>
       )}
     </div>
   );
