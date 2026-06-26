@@ -1,6 +1,12 @@
 import type { VariantDefinition, VariantId } from './types';
 import { getClassicTarget, CLASSIC_TOTAL } from './sequences/classic';
-import { getCountingTarget } from './sequences/counting';
+import {
+  BINARY_TOTAL,
+  DECIMAL_TOTAL,
+  getCountingTarget,
+  getCountingWinTarget,
+  HEX_TOTAL,
+} from './sequences/counting';
 import { getElementTarget, ELEMENTS_TOTAL } from './sequences/elements';
 import { getPiTarget } from './sequences/pi';
 
@@ -21,6 +27,7 @@ export const VARIANTS: VariantDefinition[] = [
     getTarget: boundedTarget(getClassicTarget, CLASSIC_TOTAL),
     isComplete: (index) => index >= CLASSIC_TOTAL,
     totalSteps: CLASSIC_TOTAL,
+    completeTitle: '999 reached',
   },
   {
     id: 'decimal',
@@ -28,8 +35,11 @@ export const VARIANTS: VariantDefinition[] = [
     shortDescription: 'Find 1, 2, 3, … anywhere on the plate.',
     matchRule: 'anywhere',
     matchRuleHint: 'The target can appear anywhere on the plate.',
-    getTarget: (index) => getCountingTarget(index, 10),
-    isComplete: () => false,
+    getTarget: boundedTarget((index) => getCountingTarget(index, 10), DECIMAL_TOTAL),
+    isComplete: (index) => index >= DECIMAL_TOTAL,
+    totalSteps: DECIMAL_TOTAL,
+    showTotalSteps: false,
+    completeTitle: `${getCountingWinTarget(10)} found`,
   },
   {
     id: 'hex',
@@ -37,8 +47,11 @@ export const VARIANTS: VariantDefinition[] = [
     shortDescription: 'Find 1…F, 10, 11, … anywhere on the plate.',
     matchRule: 'anywhere',
     matchRuleHint: 'The target can appear anywhere on the plate.',
-    getTarget: (index) => getCountingTarget(index, 16),
-    isComplete: () => false,
+    getTarget: boundedTarget((index) => getCountingTarget(index, 16), HEX_TOTAL),
+    isComplete: (index) => index >= HEX_TOTAL,
+    totalSteps: HEX_TOTAL,
+    showTotalSteps: false,
+    completeTitle: `${getCountingWinTarget(16)} found`,
   },
   {
     id: 'binary',
@@ -46,8 +59,11 @@ export const VARIANTS: VariantDefinition[] = [
     shortDescription: 'Find 1, 10, 11, 100, … anywhere on the plate.',
     matchRule: 'anywhere',
     matchRuleHint: 'The target can appear anywhere on the plate.',
-    getTarget: (index) => getCountingTarget(index, 2),
-    isComplete: () => false,
+    getTarget: boundedTarget((index) => getCountingTarget(index, 2), BINARY_TOTAL),
+    isComplete: (index) => index >= BINARY_TOTAL,
+    totalSteps: BINARY_TOTAL,
+    showTotalSteps: false,
+    completeTitle: `${getCountingWinTarget(2)} found`,
   },
   {
     id: 'elements',
@@ -58,6 +74,7 @@ export const VARIANTS: VariantDefinition[] = [
     getTarget: boundedTarget(getElementTarget, ELEMENTS_TOTAL),
     isComplete: (index) => index >= ELEMENTS_TOTAL,
     totalSteps: ELEMENTS_TOTAL,
+    completeTitle: 'All elements found',
   },
   {
     id: 'pi',

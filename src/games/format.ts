@@ -1,18 +1,23 @@
-import type { VariantDefinition, VariantId } from './types';
+import type { VariantId } from './types';
 import { getPiDigitsFound } from './sequences/pi';
 
-export function formatMatchRule(variant: VariantDefinition): string {
-  if (variant.matchRule === 'endAnchored') {
-    return 'Last 3 digits of the plate';
-  }
-  return 'Anywhere on the plate';
+export interface ProgressCountOptions {
+  totalSteps?: number;
+  showTotalSteps?: boolean;
+  isComplete?: boolean;
 }
 
 export function formatProgressCount(
   variantId: VariantId,
   foundCount: number,
-  totalSteps?: number,
+  options?: ProgressCountOptions,
 ): string {
+  const { totalSteps, showTotalSteps = true, isComplete = false } = options ?? {};
+
+  if (isComplete && variantId !== 'pi') {
+    return 'Complete';
+  }
+
   if (variantId === 'pi') {
     if (foundCount === 1) {
       return '1 digit of π found';
@@ -20,7 +25,7 @@ export function formatProgressCount(
     return `${foundCount} digits of π found`;
   }
 
-  if (totalSteps !== undefined) {
+  if (totalSteps !== undefined && showTotalSteps) {
     return `${foundCount} / ${totalSteps} found`;
   }
   return `${foundCount} found`;
@@ -55,12 +60,26 @@ export function formatTrackedSummary(
   variantId: VariantId,
   priorCount: number,
   trackedCount: number,
-  totalSteps?: number,
+  options?: ProgressCountOptions,
 ): string {
   const progressIndex = priorCount + trackedCount;
   const displayCount =
     variantId === 'pi' ? getPiDigitsFound(progressIndex) : progressIndex;
-  return formatProgressCount(variantId, displayCount, totalSteps);
+  const { totalSteps, showTotalSteps = true, isComplete = false } = options ?? {};
+
+  if (isComplete && showTotalSteps === false && variantId !== 'pi') {
+    return `${displayCount} found · Complete`;
+  }
+
+  if (isComplete && totalSteps !== undefined && variantId !== 'pi') {
+    return `${displayCount} / ${totalSteps} found`;
+  }
+
+  return formatProgressCount(variantId, displayCount, {
+    totalSteps,
+    showTotalSteps,
+    isComplete: false,
+  });
 }
 
 export function formatPriorCountForProgress(

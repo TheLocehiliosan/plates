@@ -106,6 +106,11 @@ export function Rules() {
             All variants track progress independently. Your data stays on this
             device in your browser.
           </li>
+          <li>
+            <strong>Decimal, Hex, and Binary</strong> have a finish line based
+            on the largest value that fits on a typical 7-character plate. The
+            app does not show how far that is until you reach it.
+          </li>
         </ul>
       </section>
 
@@ -163,11 +168,11 @@ function getSequenceDescription(id: string): string {
     case 'classic':
       return '001, 002, 003, … up to 999 (last three characters only)';
     case 'decimal':
-      return '1, 2, 3, 4, … 10, 11, 12, …';
+      return '1, 2, 3, 4, … 10, 11, 12, … (ends at the 7-character plate limit)';
     case 'hex':
-      return '1–9, A–F, 10, 11, 12, … (uppercase A–F on plates)';
+      return '1–9, A–F, 10, 11, 12, … (uppercase A–F; ends at the 7-character plate limit)';
     case 'binary':
-      return '1, 10, 11, 100, 101, 110, 111, 1000, …';
+      return '1, 10, 11, 100, 101, 110, 111, 1000, … (ends at the 7-character plate limit)';
     case 'elements':
       return 'H, HE, LI, BE, B, C, … through OG (118 elements)';
     case 'pi':
@@ -186,6 +191,7 @@ function getGoalDescription(id: string): string {
     case 'decimal':
     case 'hex':
     case 'binary':
+      return 'Reach the largest value that fits on a 7-character plate — a lifetime achievement for most players.';
     case 'pi':
       return 'No finish line — how far you get is the achievement.';
     default:

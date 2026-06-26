@@ -26,10 +26,14 @@ export interface VariantProgress {
   entries: ProgressEntry[];
   /** When the user started logging finds in the app (ISO string). */
   trackedSince?: string;
+  /** When the winning find was logged (ISO string). */
+  completedAt?: string;
+  /** Whether the one-time win celebration has been shown. */
+  winCelebrated?: boolean;
 }
 
 export interface AppState {
-  version: 2;
+  version: 3;
   variants: Record<VariantId, VariantProgress>;
 }
 
@@ -44,6 +48,10 @@ export interface VariantDefinition {
   getTarget: (index: number) => string | null;
   isComplete: (index: number) => boolean;
   totalSteps?: number;
+  /** When false, progress shows "N found" instead of "N / totalSteps found". Default true. */
+  showTotalSteps?: boolean;
+  /** Message shown on the complete road sign in variant detail. */
+  completeTitle?: string;
 }
 
 export type SetPositionMode = 'nextTarget' | 'lastFound';

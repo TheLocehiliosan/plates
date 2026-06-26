@@ -22,8 +22,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
+      const variant = getVariant(variantId);
       const trimmedNote = note?.trim();
       const now = new Date().toISOString();
+      const newProgressIndex = progressIndex + 1;
+      const willComplete = variant.isComplete(newProgressIndex);
+
       const next: AppState = {
         ...state,
         variants: {
@@ -31,6 +35,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           [variantId]: {
             ...progress,
             trackedSince: progress.trackedSince ?? now,
+            ...(willComplete
+              ? { completedAt: now, winCelebrated: false }
+              : {}),
             entries: [
               ...progress.entries,
               {
@@ -56,13 +63,22 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
+      const variant = getVariant(variantId);
+      const wasComplete = variant.isComplete(getProgressIndex(progress));
+      const newEntries = progress.entries.slice(0, -1);
+      const newProgressIndex = progress.priorCount + newEntries.length;
+      const isCompleteNow = variant.isComplete(newProgressIndex);
+
       const next: AppState = {
         ...state,
         variants: {
           ...state.variants,
           [variantId]: {
             ...progress,
-            entries: progress.entries.slice(0, -1),
+            entries: newEntries,
+            ...(wasComplete && !isCompleteNow
+              ? { completedAt: undefined, winCelebrated: undefined }
+              : {}),
           },
         },
       };
@@ -99,12 +115,35 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
             priorCount: progressIndex,
             entries: [],
             trackedSince: undefined,
+            completedAt: undefined,
+            winCelebrated: undefined,
           },
         },
       };
 
       persist(next);
       return true;
+    },
+    [persist, state],
+  );
+
+  const markWinCelebrated = useCallback(
+    (variantId: VariantId) => {
+      const progress = state.variants[variantId];
+      if (progress.winCelebrated) {
+        return;
+      }
+
+      persist({
+        ...state,
+        variants: {
+          ...state.variants,
+          [variantId]: {
+            ...progress,
+            winCelebrated: true,
+          },
+        },
+      });
     },
     [persist, state],
   );
@@ -117,8 +156,15 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ state, recordFind, undoLast, setPosition, restoreBackup }),
-    [recordFind, restoreBackup, setPosition, state, undoLast],
+    () => ({
+      state,
+      recordFind,
+      undoLast,
+      setPosition,
+      markWinCelebrated,
+      restoreBackup,
+    }),
+    [markWinCelebrated, recordFind, restoreBackup, setPosition, state, undoLast],
   );
 
   return (

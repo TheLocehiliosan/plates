@@ -8,7 +8,7 @@ function emptyVariantProgress(): AppState['variants'][VariantId] {
 
 function createEmptyState(): AppState {
   return {
-    version: 2,
+    version: 3,
     variants: VARIANT_IDS.reduce(
       (acc, id) => {
         acc[id] = emptyVariantProgress();
@@ -54,6 +54,8 @@ function normalizeVariantProgress(raw: unknown): AppState['variants'][VariantId]
     priorCount?: unknown;
     entries?: unknown;
     trackedSince?: unknown;
+    completedAt?: unknown;
+    winCelebrated?: unknown;
   };
 
   if (typeof candidate.priorCount === 'number' && candidate.priorCount >= 0) {
@@ -64,6 +66,14 @@ function normalizeVariantProgress(raw: unknown): AppState['variants'][VariantId]
 
   if (typeof candidate.trackedSince === 'string' && candidate.trackedSince) {
     base.trackedSince = candidate.trackedSince;
+  }
+
+  if (typeof candidate.completedAt === 'string' && candidate.completedAt) {
+    base.completedAt = candidate.completedAt;
+  }
+
+  if (candidate.winCelebrated === true) {
+    base.winCelebrated = true;
   }
 
   return base;
@@ -93,12 +103,12 @@ function normalizeState(raw: unknown): AppState {
             : [],
         ),
       };
-    } else if (version === 2) {
+    } else if (version === 2 || version === 3) {
       empty.variants[id] = normalizeVariantProgress(progress);
     }
   }
 
-  if (version !== 1 && version !== 2) {
+  if (version !== 1 && version !== 2 && version !== 3) {
     return createEmptyState();
   }
 
@@ -111,7 +121,7 @@ export function parseBackupData(raw: unknown): AppState | null {
   }
 
   const candidate = raw as { version?: unknown; variants?: unknown };
-  if (candidate.version !== 1 && candidate.version !== 2) {
+  if (candidate.version !== 1 && candidate.version !== 2 && candidate.version !== 3) {
     return null;
   }
   if (!candidate.variants || typeof candidate.variants !== 'object') {
@@ -131,7 +141,11 @@ export function loadState(): AppState {
     if (!raw) {
       return createEmptyState();
     }
-    return normalizeState(JSON.parse(raw));
+    const state = normalizeState(JSON.parse(raw));
+    if (state.version !== 3) {
+      saveState({ ...state, version: 3 });
+    }
+    return { ...state, version: 3 };
   } catch {
     return createEmptyState();
   }

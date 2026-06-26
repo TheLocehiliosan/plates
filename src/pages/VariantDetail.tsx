@@ -8,14 +8,17 @@ import { LearnMoreLink } from '../components/LearnMoreLink';
 import { ProgressHistory } from '../components/ProgressHistory';
 import { RoadSign } from '../components/RoadSign';
 import { SetStartingPosition } from '../components/SetStartingPosition';
+import { WinModal } from '../components/WinModal';
 import { useProgress } from '../context/useProgress';
 import { getClassicFlavor } from '../games/flavor/classic';
+import { getCountingWinCopy } from '../games/flavor/counting';
 import { getElementFlavorWithName } from '../games/flavor/elements';
 import type { Flavor } from '../games/flavor/types';
-import { formatTrackedSummary, formatTargetDisplay } from '../games/format';
+import { formatDate, formatTrackedSummary, formatTargetDisplay } from '../games/format';
 import { getLearnMoreLink } from '../games/links';
 import { getProgressIndex } from '../games/progress';
 import { getNextTarget, getVariant } from '../games/registry';
+import type { VariantId } from '../games/types';
 import { isValidVariantId } from '../storage/progressStore';
 import styles from './VariantDetail.module.css';
 
@@ -27,22 +30,36 @@ interface FlavorReveal {
 
 export function VariantDetail() {
   const { variantId: variantIdParam } = useParams();
-  const { state, recordFind, undoLast, setPosition } = useProgress();
+  const { state, recordFind, undoLast, setPosition, markWinCelebrated } = useProgress();
   const [flavorReveal, setFlavorReveal] = useState<FlavorReveal | null>(null);
 
-  if (!isValidVariantId(variantIdParam)) {
-    return <Navigate to="/" replace />;
-  }
-
-  const variantId = variantIdParam;
+  const isValid = isValidVariantId(variantIdParam);
+  const variantId: VariantId = isValid ? variantIdParam : 'classic';
   const variant = getVariant(variantId);
   const progress = state.variants[variantId];
-  const { priorCount, entries } = progress;
+  const { priorCount, entries, completedAt, winCelebrated } = progress;
   const progressIndex = getProgressIndex(progress);
   const isComplete = variant.isComplete(progressIndex);
   const nextTarget = getNextTarget(variantId, progressIndex);
+  const winCopy = getCountingWinCopy(variantId);
+  const shouldShowWinModal =
+    isValid && isComplete && !!completedAt && !winCelebrated && !!winCopy;
+
+  if (!isValid) {
+    return <Navigate to="/" replace />;
+  }
+
   const currentLearnMore =
     nextTarget !== null ? getLearnMoreLink(variantId, nextTarget) : null;
+  const progressOptions = {
+    totalSteps: variant.totalSteps,
+    showTotalSteps: variant.showTotalSteps,
+    isComplete,
+  };
+
+  function handleWinModalClose() {
+    markWinCelebrated(variantId);
+  }
 
   function handleFound(note?: string) {
     if (!nextTarget) {
@@ -91,9 +108,12 @@ export function VariantDetail() {
             variantId,
             priorCount,
             entries.length,
-            variant.totalSteps,
+            progressOptions,
           )}
         </p>
+        {completedAt && (
+          <p className={styles.completedAt}>Completed {formatDate(completedAt)}</p>
+        )}
       </header>
 
       <section className={styles.current}>
@@ -102,9 +122,7 @@ export function VariantDetail() {
             <div className={styles.completeSignBody}>
               <span className={styles.completeIcon}>✓</span>
               <p className={styles.completeTitle}>
-                {variantId === 'classic'
-                  ? '999 reached'
-                  : 'All elements found'}
+                {variant.completeTitle ?? 'Maximum plate reached'}
               </p>
             </div>
           </RoadSign>
@@ -173,6 +191,14 @@ export function VariantDetail() {
           flavor={flavorReveal.flavor}
           subtitle={flavorReveal.subtitle}
           onClose={() => setFlavorReveal(null)}
+        />
+      )}
+
+      {shouldShowWinModal && winCopy && (
+        <WinModal
+          target={winCopy.target}
+          message={winCopy.message}
+          onClose={handleWinModalClose}
         />
       )}
     </div>

@@ -38,7 +38,11 @@ export function VariantCard({ variantId }: VariantCardProps) {
         footer={formatProgressCount(
           variantId,
           variantId === 'pi' ? getPiDigitsFound(foundCount) : foundCount,
-          variant.totalSteps,
+          {
+            totalSteps: variant.totalSteps,
+            showTotalSteps: variant.showTotalSteps,
+            isComplete,
+          },
         )}
         complete={isComplete}
       >
